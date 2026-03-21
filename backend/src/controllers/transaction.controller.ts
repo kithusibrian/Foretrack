@@ -3,14 +3,14 @@ import { asyncHandler } from "../middlewares/asyncHandler.middlerware";
 import { HTTPSTATUS } from "../config/http.config";
 import {
   bulkDeleteTransactionSchema,
-  //bulkTransactionSchema,
+  bulkTransactionSchema,
   createTransactionSchema,
   transactionIdSchema,
   updateTransactionSchema,
 } from "../validators/transaction.validator";
 import {
   bulkDeleteTransactionService,
-  //bulkTransactionService,
+  bulkTransactionService,
   createTransactionService,
   deleteTransactionService,
   duplicateTransactionService,
@@ -142,10 +142,6 @@ export const bulkDeleteTransactionController = asyncHandler(
   },
 );
 
-//start here
-/*
-
-
 export const bulkTransactionController = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?._id;
@@ -157,8 +153,12 @@ export const bulkTransactionController = asyncHandler(
       message: "Bulk transaction inserted successfully",
       ...result,
     });
-  }
+  },
 );
+
+//start here
+/*
+
 
 export const scanReceiptController = asyncHandler(
   async (req: Request, res: Response) => {

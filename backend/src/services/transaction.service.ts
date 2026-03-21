@@ -233,12 +233,9 @@ export const bulkDeleteTransactionService = async (
   };
 };
 
-//nmefika hapa so far niko hapa
-/*
-
 export const bulkTransactionService = async (
   userId: string,
-  transactions: CreateTransactionType[]
+  transactions: CreateTransactionType[],
 ) => {
   try {
     const bulkOps = transactions.map((tx) => ({
@@ -268,7 +265,8 @@ export const bulkTransactionService = async (
     throw error;
   }
 };
-
+//nmefika hapa so far niko hapa
+/*
 export const scanReceiptService = async (
   file: Express.Multer.File | undefined
 ) => {
