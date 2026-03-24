@@ -16,7 +16,7 @@ import {
   duplicateTransactionService,
   getAllTransactionService,
   getTransactionByIdService,
-  //scanReceiptService,
+  scanReceiptService,
   updateTransactionService,
 } from "../services/transaction.service";
 import { TransactionTypeEnum } from "../models/transaction.model";
@@ -150,15 +150,13 @@ export const bulkTransactionController = asyncHandler(
     const result = await bulkTransactionService(userId, transactions);
 
     return res.status(HTTPSTATUS.OK).json({
-      message: "Bulk transaction inserted successfully",
+      message: "Bulk transactions inserted successfully",
       ...result,
     });
   },
 );
 
-//start here
-/*
-
+//implementing google gemini receipt extraction capability
 
 export const scanReceiptController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -170,7 +168,5 @@ export const scanReceiptController = asyncHandler(
       message: "Reciept scanned successfully",
       data: result,
     });
-  }
+  },
 );
-
-*/

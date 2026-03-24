@@ -1,4 +1,4 @@
-//import axios from "axios";
+import axios from "axios";
 import TransactionModel, {
   TransactionTypeEnum,
 } from "../models/transaction.model";
@@ -8,9 +8,9 @@ import {
   CreateTransactionType,
   UpdateTransactionType,
 } from "../validators/transaction.validator";
-//import { genAI, genAIModel } from "../config/google-ai.config";
-//import { createPartFromBase64, createUserContent } from "@google/genai";
-//import { receiptPrompt } from "../utils/prompt";
+import { genAI, genAIModel } from "../config/google-ai.config";
+import { createPartFromBase64, createUserContent } from "@google/genai";
+import { receiptPrompt } from "../utils/prompt";
 
 export const createTransactionService = async (
   body: CreateTransactionType,
@@ -265,10 +265,10 @@ export const bulkTransactionService = async (
     throw error;
   }
 };
-//nmefika hapa so far niko hapa
-/*
+//implementing the scan receipt service using google gemini AI to extract data from receipt images. This will allow users to quickly add transactions by simply uploading a photo of their receipt. The AI will analyze the image and extract relevant information such as amount, date, merchant name, and category, making it easier for users to track their expenses without manual data entry.
+
 export const scanReceiptService = async (
-  file: Express.Multer.File | undefined
+  file: Express.Multer.File | undefined,
 ) => {
   if (!file) throw new BadRequestException("No file uploaded");
 
@@ -277,13 +277,16 @@ export const scanReceiptService = async (
 
     console.log(file.path);
 
+    // Fetch the file
     const responseData = await axios.get(file.path, {
       responseType: "arraybuffer",
+      timeout: 15000, // avoid hanging
     });
     const base64String = Buffer.from(responseData.data).toString("base64");
 
     if (!base64String) throw new BadRequestException("Could not process file");
 
+    // Generate content with Gemini
     const result = await genAI.models.generateContent({
       model: genAIModel,
       contents: [
@@ -299,7 +302,11 @@ export const scanReceiptService = async (
       },
     });
 
+    // Log Gemini response for debugging
     const response = result.text;
+    console.log("RAW GEMINI RESPONSE:", response);
+
+    // Clean response
     const cleanedText = response?.replace(/```(?:json)?\n?/g, "").trim();
 
     if (!cleanedText)
@@ -307,12 +314,21 @@ export const scanReceiptService = async (
         error: "Could not read reciept  content",
       };
 
-    const data = JSON.parse(cleanedText);
+    // Parse JSON safely
+    let data: any;
+    try {
+      data = JSON.parse(cleanedText);
+    } catch (err) {
+      console.error("JSON PARSE ERROR:", cleanedText);
+      return { error: "Invalid AI response format" };
+    }
 
+    // Check required fields
     if (!data.amount || !data.date) {
       return { error: "Reciept missing required information" };
     }
 
+    // Return structured receipt
     return {
       title: data.title || "Receipt",
       amount: data.amount,
@@ -323,9 +339,12 @@ export const scanReceiptService = async (
       type: data.type,
       receiptUrl: file.path,
     };
-  } catch (error) {
+  } catch (error: any) {
+    console.error(
+      "SCAN ERROR:",
+      error?.response?.data || error?.message || error,
+    );
+
     return { error: "Reciept scanning  service unavailable" };
   }
 };
-
-*/
