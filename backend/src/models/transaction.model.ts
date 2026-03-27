@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { convertToCents, convertToDollarUnit } from "../utils/format-currency";
+import { convertToCents, convertCentsToKes } from "../utils/format-currency";
 
 export enum TransactionStatusEnum {
   PENDING = "PENDING",
@@ -67,7 +67,7 @@ const transactionSchema = new Schema<TransactionDocument>(
       type: Number,
       required: true,
       set: (value: number) => convertToCents(value),
-      get: (value: number) => convertToDollarUnit(value),
+      get: (value: number) => convertCentsToKes(value),
     },
 
     description: {

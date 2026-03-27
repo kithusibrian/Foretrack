@@ -4,7 +4,7 @@ import "./config/passport.config";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import { Env } from "./config/env.config";
-
+import { initializeCrons } from "./cron";
 import { HTTPSTATUS } from "./config/http.config";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
 import { BadRequestException } from "./utils/app-error";
@@ -14,6 +14,7 @@ import authRoutes from "./routes/auth.route";
 import { passportAuthenticateJwt } from "./config/passport.config";
 import userRoutes from "./routes/user.route";
 import transactionRoutes from "./routes/transaction.route";
+import reportRoutes from "./routes/report.route";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -44,8 +45,9 @@ app.use(`${BASE_PATH}/auth`, authRoutes);
 
 app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
 app.use(`${BASE_PATH}/transaction`, passportAuthenticateJwt, transactionRoutes);
-/* 
+
 app.use(`${BASE_PATH}/report`, passportAuthenticateJwt, reportRoutes);
+/*
 app.use(`${BASE_PATH}/analytics`, passportAuthenticateJwt, analyticsRoutes);
 */
 
@@ -53,5 +55,8 @@ app.use(errorHandler);
 
 app.listen(Env.PORT, async () => {
   await connctDatabase();
+  if (Env.NODE_ENV === "development") {
+    await initializeCrons();
+  }
   console.log(`Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
 });
