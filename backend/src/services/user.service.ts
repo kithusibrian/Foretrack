@@ -6,11 +6,11 @@ export const findByIdUserService = async (userId: string) => {
   const user = await UserModel.findById(userId);
   return user?.omitPassword();
 };
-
-/* export const updateUserService = async (
+// function to update user details and profile picture
+export const updateUserService = async (
   userId: string,
   body: UpdateUserType,
-  profilePic?: Express.Multer.File
+  profilePic?: Express.Multer.File,
 ) => {
   const user = await UserModel.findById(userId);
   if (!user) throw new NotFoundException("User not found");
@@ -25,7 +25,5 @@ export const findByIdUserService = async (userId: string) => {
 
   await user.save();
 
-  return user.omitPassword();
+  return user.omitPassword(); //hide password in response
 };
-
-*/

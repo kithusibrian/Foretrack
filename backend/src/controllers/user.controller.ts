@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { asyncHandler } from "../middlewares/asyncHandler.middlerware";
 import {
   findByIdUserService,
-  // updateUserService,
+  updateUserService,
 } from "../services/user.service";
 import { HTTPSTATUS } from "../config/http.config";
-//import { updateUserSchema } from "../validators/user.validator";
+import { updateUserSchema } from "../validators/user.validator";
 
 export const getCurrentUserController = asyncHandler(
   async (req: Request, res: Response) => {
@@ -18,8 +18,8 @@ export const getCurrentUserController = asyncHandler(
     });
   },
 );
-
-/* export const updateUserController = asyncHandler(
+//Updating user details and profile picture
+export const updateUserController = asyncHandler(
   async (req: Request, res: Response) => {
     const body = updateUserSchema.parse(req.body);
     const userId = req.user?._id;
@@ -31,5 +31,5 @@ export const getCurrentUserController = asyncHandler(
       message: "User profile updated successfully",
       data: user,
     });
-  }
-);  */
+  },
+);
