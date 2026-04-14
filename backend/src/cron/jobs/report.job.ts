@@ -10,8 +10,7 @@ import { sendReportEmail } from "../../mailers/report.mailer";
 export const processReportJob = async () => {
   const now = new Date();
 
-  //"2026-04-01T00:00:00.000Z"  -- Mock date for testing
-
+  //const now = new Date("2026-04-01T00:00:00.000Z"); //"2026-04-01T00:00:00.000Z";
   let processedCount = 0;
   let failedCount = 0;
 

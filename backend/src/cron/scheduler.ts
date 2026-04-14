@@ -29,5 +29,6 @@ export const startJobs = () => {
 
     //run 2:30am every first of the month
     scheduleJob("Reports", "30 2 1 * *", processReportJob),
+    //scheduleJob("Reports", "* * * * *", processReportJob),
   ];
 };
