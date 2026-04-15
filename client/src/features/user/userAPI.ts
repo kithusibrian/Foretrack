@@ -1,10 +1,14 @@
 import { apiClient } from "@/app/api-client";
-import { UpdateUserResponse } from "./userType";
-
+import {
+  ChangePasswordPayload,
+  ChangePasswordResponse,
+  DeleteAccountPayload,
+  DeleteAccountResponse,
+  UpdateUserResponse,
+} from "./userType";
 
 export const userApi = apiClient.injectEndpoints({
   endpoints: (builder) => ({
-
     updateUser: builder.mutation<UpdateUserResponse, FormData>({
       query: (formData) => ({
         url: "/user/update",
@@ -12,7 +16,31 @@ export const userApi = apiClient.injectEndpoints({
         body: formData,
       }),
     }),
-  })
-})
+    changePassword: builder.mutation<
+      ChangePasswordResponse,
+      ChangePasswordPayload
+    >({
+      query: (body) => ({
+        url: "/user/change-password",
+        method: "PUT",
+        body,
+      }),
+    }),
+    deleteAccount: builder.mutation<
+      DeleteAccountResponse,
+      DeleteAccountPayload
+    >({
+      query: (body) => ({
+        url: "/user/delete-account",
+        method: "DELETE",
+        body,
+      }),
+    }),
+  }),
+});
 
-export const {useUpdateUserMutation} = userApi;
+export const {
+  useUpdateUserMutation,
+  useChangePasswordMutation,
+  useDeleteAccountMutation,
+} = userApi;

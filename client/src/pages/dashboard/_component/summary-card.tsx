@@ -27,11 +27,11 @@ interface SummaryCardProps {
 }
 
 const getCardStatus = (
-  value: number, 
+  value: number,
   cardType: CardType,
-  expenseRatio?: number
+  expenseRatio?: number,
 ): CardStatus => {
- if (cardType === "savings") {
+  if (cardType === "savings") {
     if (value === 0) {
       return {
         label: "No Savings Record",
@@ -118,7 +118,6 @@ const getCardStatus = (
   };
 };
 
-
 const getTrendDirection = (value: number, cardType: CardType) => {
   if (cardType === "expenses") {
     // For expenses, lower is better
@@ -151,11 +150,11 @@ const SummaryCard: FC<SummaryCardProps> = ({
 
   if (isLoading) {
     return (
-      <Card className="!border-none !border-0 !gap-0 !bg-white/5">
+      <Card className="h-full !border-none !border-0 !gap-0 !bg-white/5">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 !pb-5">
           <Skeleton className="h-4 w-24 bg-white/30" />
         </CardHeader>
-        <CardContent className="space-y-8">
+        <CardContent className="flex min-h-[8.75rem] flex-col justify-between gap-5">
           <Skeleton className="h-10.5 w-full bg-white/30" />
           <div className="flex items-center gap-2">
             <Skeleton className="h-3 w-12 bg-white/30" />
@@ -171,22 +170,22 @@ const SummaryCard: FC<SummaryCardProps> = ({
     return isPercentageValue
       ? formatPercentage(val, { decimalPlaces: 1 })
       : formatCurrency(val, {
-          isExpense: cardType === "expenses",
+          isExpense: false,
           showSign: cardType === "balance" && val < 0,
         });
   };
   return (
-    <Card className="!border-none !border-0 !gap-0 !bg-white/5">
+    <Card className="h-full !border-none !border-0 !gap-0 !bg-white/5">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 !pb-5">
         <CardTitle className="text-[15px] text-gray-300 font-medium">
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="flex min-h-[8.75rem] flex-col justify-between gap-5">
         <div
           className={cn(
-            "text-4xl font-bold",
-            cardType === "balance" && value < 0 ? "text-red-400" : "text-white"
+            "max-w-full text-[1.9rem] xl:text-[2.2rem] font-bold leading-[1.2] tracking-tight tabular-nums whitespace-normal [word-break:normal] [overflow-wrap:normal]",
+            cardType === "balance" && value < 0 ? "text-red-400" : "text-white",
           )}
         >
           <CountUp
@@ -199,7 +198,7 @@ const SummaryCard: FC<SummaryCardProps> = ({
           />
         </div>
 
-        <div className="text-sm text-muted-foreground mt-2">
+        <div className="mt-2 min-h-5 text-sm text-muted-foreground">
           {cardType === "savings" ? (
             <div className="flex items-center gap-1.5">
               <status.Icon className={cn("size-3.5", status.color)} />
@@ -212,7 +211,7 @@ const SummaryCard: FC<SummaryCardProps> = ({
                 </span>
               )}
             </div>
-          ) : dateRange?.value ===DateRangeEnum.ALL_TIME  ? (
+          ) : dateRange?.value === DateRangeEnum.ALL_TIME ? (
             <span className="text-gray-400">Showing {dateRange?.label}</span>
           ) : value === 0 || status.label ? (
             <div className="flex items-center gap-1.5">
@@ -225,7 +224,7 @@ const SummaryCard: FC<SummaryCardProps> = ({
                 <span className="text-gray-400">• {dateRange?.label}</span>
               )}
             </div>
-          ): showTrend ? (
+          ) : showTrend ? (
             <div className="flex items-center gap-1.5">
               {percentageChange !== 0 && (
                 <div
@@ -233,7 +232,7 @@ const SummaryCard: FC<SummaryCardProps> = ({
                     "flex items-center gap-0.5",
                     trendDirection === "positive"
                       ? "text-green-500"
-                      : "text-red-500"
+                      : "text-red-500",
                   )}
                 >
                   {trendDirection === "positive" ? (
@@ -241,7 +240,7 @@ const SummaryCard: FC<SummaryCardProps> = ({
                   ) : (
                     <TrendingDownIcon className="size-3" />
                   )}
-{/*                   Math.abs(percentageChange || 0) */}
+                  {/*                   Math.abs(percentageChange || 0) */}
                   <span>
                     {formatPercentage(percentageChange || 0, {
                       showSign: percentageChange !== 0,

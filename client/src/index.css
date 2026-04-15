@@ -6,8 +6,30 @@ body {
   font-family: "Onest", sans-serif !important;
 }
 
-.recurring-control button span{
+.recurring-control button span {
   text-transform: capitalize !important;
+}
+
+@keyframes authRiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes authFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -133,7 +155,6 @@ body {
     @apply bg-[var(--bg-color)] dark:bg-background text-foreground;
   }
 }
-
 
 /* --chart-1: oklch(0.37 0.14 146.5);
 --chart-2: oklch(0.65 0.16 147.2);

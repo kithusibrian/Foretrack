@@ -1,4 +1,5 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config({ override: true });
 import passport from "passport";
 import "./config/passport.config";
 import express, { NextFunction, Request, Response } from "express";

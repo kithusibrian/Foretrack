@@ -23,6 +23,17 @@ const envConfig = () => ({
   RESEND_MAILER_SENDER: getEnv("RESEND_MAILER_SENDER", ""),
 
   FRONTEND_ORIGIN: getEnv("FRONTEND_ORIGIN", "localhost"),
+  FRONTEND_AUTH_CALLBACK_URL: getEnv(
+    "FRONTEND_AUTH_CALLBACK_URL",
+    "http://localhost:5173/oauth/callback",
+  ),
+
+  GOOGLE_CLIENT_ID: getEnv("GOOGLE_CLIENT_ID", ""),
+  GOOGLE_CLIENT_SECRET: getEnv("GOOGLE_CLIENT_SECRET", ""),
+  GOOGLE_CALLBACK_URL: getEnv(
+    "GOOGLE_CALLBACK_URL",
+    "http://localhost:8000/api/auth/google/callback",
+  ),
 });
 
 export const Env = envConfig();

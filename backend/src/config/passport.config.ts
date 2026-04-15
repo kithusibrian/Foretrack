@@ -3,6 +3,11 @@ import {
   ExtractJwt,
   StrategyOptions,
 } from "passport-jwt";
+import {
+  Profile,
+  Strategy as GoogleStrategy,
+  VerifyCallback,
+} from "passport-google-oauth20";
 import passport from "passport";
 import { Env } from "./env.config";
 import { findByIdUserService } from "../services/user.service";
@@ -36,6 +41,26 @@ passport.use(
     }
   }),
 );
+
+if (Env.GOOGLE_CLIENT_ID && Env.GOOGLE_CLIENT_SECRET) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: Env.GOOGLE_CLIENT_ID,
+        clientSecret: Env.GOOGLE_CLIENT_SECRET,
+        callbackURL: Env.GOOGLE_CALLBACK_URL,
+      },
+      (
+        _accessToken: string,
+        _refreshToken: string,
+        profile: Profile,
+        done: VerifyCallback,
+      ) => {
+        return done(null, profile as unknown as Express.User);
+      },
+    ),
+  );
+}
 
 passport.serializeUser((user: any, done) => done(null, user));
 passport.deserializeUser((user: any, done) => done(null, user));
