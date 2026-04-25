@@ -12,6 +12,8 @@ import { genAI, genAIModel } from "../config/google-ai.config";
 import { createPartFromBase64, createUserContent } from "@google/genai";
 import { receiptPrompt } from "../utils/prompt";
 
+const normalizeCategory = (category: string) => category.trim().toLowerCase();
+
 export const createTransactionService = async (
   body: CreateTransactionType,
   userId: string,
@@ -34,7 +36,7 @@ export const createTransactionService = async (
   const transaction = await TransactionModel.create({
     ...body,
     userId,
-    category: body.category,
+    category: normalizeCategory(body.category),
     amount: Number(body.amount),
     isRecurring: body.isRecurring || false,
     recurringInterval: body.recurringInterval || null,
@@ -187,7 +189,7 @@ export const updateTransactionService = async (
   existingTransaction.set({
     ...(body.title && { title: body.title }),
     ...(body.description && { description: body.description }),
-    ...(body.category && { category: body.category }),
+    ...(body.category && { category: normalizeCategory(body.category) }),
     ...(body.type && { type: body.type }),
     ...(body.paymentMethod && { paymentMethod: body.paymentMethod }),
     ...(body.amount !== undefined && { amount: Number(body.amount) }),

@@ -6,6 +6,7 @@ import ExpensePieChart from "./expense-pie-chart";
 import DashboardRecentTransactions from "./dashboard-recent-transactions";
 import { useState } from "react";
 import { DateRangeType } from "@/components/date-range-select";
+import BudgetProgressCard from "./_component/budget-progress-card";
 
 const Dashboard = () => {
   const [dateRange, _setDateRange] = useState<DateRangeType>(null);
@@ -30,6 +31,9 @@ const Dashboard = () => {
           <div className="lg:col-span-2">
             <ExpensePieChart dateRange={dateRange} />
           </div>
+        </div>
+        <div className="w-full">
+          <BudgetProgressCard />
         </div>
         {/* Dashboard Recent Transactions */}
         <div className="w-full mt-0">

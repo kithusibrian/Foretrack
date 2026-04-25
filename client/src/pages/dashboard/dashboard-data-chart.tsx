@@ -1,6 +1,13 @@
 import * as React from "react";
 import { format } from "date-fns";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ReferenceLine,
+} from "recharts";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Card,
@@ -28,7 +35,7 @@ interface PropsType {
   dateRange?: DateRangeType;
 }
 
-const COLORS = ["var(--primary)", "var(--color-destructive)"];
+const COLORS = ["#10906D", "#E25D48"];
 const TRANSACTION_TYPES = ["income", "expenses"];
 
 const chartConfig = {
@@ -42,6 +49,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const formatKsh = (
+  value: number,
+  options: Parameters<typeof formatCurrency>[1] = {},
+) => formatCurrency(value, options).replace(/^KES/i, "KSh");
+
 const DashboardDataChart: React.FC<PropsType> = (props) => {
   const { dateRange } = props;
   const isMobile = useIsMobile();
@@ -52,15 +64,23 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
   const chartData = data?.data?.chartData || [];
   const totalExpenseCount = data?.data?.totalExpenseCount || 0;
   const totalIncomeCount = data?.data?.totalIncomeCount || 0;
+  const maxValue = React.useMemo(() => {
+    return Math.max(
+      ...chartData.map((item) =>
+        Math.max(Number(item.income || 0), Number(item.expenses || 0)),
+      ),
+      0,
+    );
+  }, [chartData]);
 
   if (isFetching) {
     return <ChartSkeleton />;
   }
 
   return (
-    <Card className="!shadow-none border-1 border-gray-100 dark:border-border !pt-0">
+    <Card className="!pt-0 border border-emerald-100/80 bg-gradient-to-br from-emerald-50/70 via-white to-amber-50/40 shadow-[0_10px_40px_-24px_rgba(16,144,109,0.6)] dark:border-border dark:from-background dark:to-background">
       <CardHeader
-        className="flex flex-col items-stretch !space-y-0 border-b border-gray-100
+        className="flex flex-col items-stretch !space-y-0 border-b border-emerald-100/80
       dark:border-border !p-0 pr-1 sm:flex-row"
       >
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-0 sm:py-0">
@@ -107,24 +127,42 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
             config={chartConfig}
             className="aspect-auto h-[300px] w-full"
           >
-            <AreaChart data={chartData || []}>
+            <BarChart
+              data={chartData || []}
+              barGap={8}
+              barCategoryGap={isMobile ? "18%" : "28%"}
+            >
               <defs>
-                <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={COLORS[0]} stopOpacity={1.0} />
-                  <stop offset="95%" stopColor={COLORS[0]} stopOpacity={0.1} />
-                </linearGradient>
                 <linearGradient
-                  id="expensesGradient"
+                  id="incomeBarGradient"
                   x1="0"
                   y1="0"
                   x2="0"
                   y2="1"
                 >
-                  <stop offset="5%" stopColor={COLORS[1]} stopOpacity={0.8} />
-                  <stop offset="95%" stopColor={COLORS[1]} stopOpacity={0.1} />
+                  <stop offset="0%" stopColor={COLORS[0]} stopOpacity={0.95} />
+                  <stop
+                    offset="100%"
+                    stopColor={COLORS[0]}
+                    stopOpacity={0.35}
+                  />
+                </linearGradient>
+                <linearGradient
+                  id="expenseBarGradient"
+                  x1="0"
+                  y1="0"
+                  x2="0"
+                  y2="1"
+                >
+                  <stop offset="0%" stopColor={COLORS[1]} stopOpacity={0.95} />
+                  <stop
+                    offset="100%"
+                    stopColor={COLORS[1]}
+                    stopOpacity={0.35}
+                  />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid vertical={false} strokeDasharray="4 4" />
               <XAxis
                 dataKey="date"
                 tickLine={false}
@@ -135,11 +173,20 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                   format(new Date(value), isMobile ? "MMM d" : "MMMM d, yyyy")
                 }
               />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                width={isMobile ? 56 : 72}
+                tickFormatter={(value) =>
+                  formatKsh(Number(value), { compact: true, decimalPlaces: 0 })
+                }
+                domain={[0, Math.ceil(maxValue * 1.2)]}
+              />
+              <ReferenceLine y={0} stroke="var(--border)" />
               <ChartTooltip
                 cursor={{
-                  stroke: "#94a3b8",
+                  fill: "rgba(15,23,42,0.05)",
                   strokeWidth: 1,
-                  strokeDasharray: "3 3",
                 }}
                 content={
                   <ChartTooltipContent
@@ -164,26 +211,25 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                   />
                 }
               />
-              <Area
-                dataKey="expenses"
-                stackId="1"
-                type="step"
-                fill="url(#expensesGradient)"
-                stroke={COLORS[1]}
-                className="drop-shadow-sm"
-              />
-              <Area
+              <Bar
                 dataKey="income"
-                stackId="1"
-                type="step"
-                fill="url(#incomeGradient)"
-                stroke={COLORS[0]}
+                name="income"
+                fill="url(#incomeBarGradient)"
+                radius={[8, 8, 0, 0]}
+                maxBarSize={isMobile ? 20 : 28}
+              />
+              <Bar
+                dataKey="expenses"
+                name="expenses"
+                fill="url(#expenseBarGradient)"
+                radius={[8, 8, 0, 0]}
+                maxBarSize={isMobile ? 20 : 28}
               />
               <ChartLegend
                 verticalAlign="bottom"
                 content={<ChartLegendContent />}
               />
-            </AreaChart>
+            </BarChart>
           </ChartContainer>
         )}
       </CardContent>

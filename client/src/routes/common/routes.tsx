@@ -6,6 +6,7 @@ import TermsAndConditions from "@/pages/auth/terms-and-conditions";
 import PrivacyPolicy from "@/pages/auth/privacy-policy";
 import Dashboard from "@/pages/dashboard";
 import Transactions from "@/pages/transactions";
+import Budgets from "@/pages/budgets";
 import Reports from "@/pages/reports";
 import Settings from "@/pages/settings";
 import Account from "@/pages/settings/account";
@@ -26,6 +27,7 @@ export const authenticationRoutePaths = [
 export const protectedRoutePaths = [
   { path: PROTECTED_ROUTES.OVERVIEW, element: <Dashboard /> },
   { path: PROTECTED_ROUTES.TRANSACTIONS, element: <Transactions /> },
+  { path: PROTECTED_ROUTES.BUDGETS, element: <Budgets /> },
   { path: PROTECTED_ROUTES.REPORTS, element: <Reports /> },
   {
     path: PROTECTED_ROUTES.SETTINGS,

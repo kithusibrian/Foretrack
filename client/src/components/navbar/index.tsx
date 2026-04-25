@@ -27,6 +27,10 @@ const Navbar = () => {
       label: "Transactions",
     },
     {
+      href: PROTECTED_ROUTES.BUDGETS,
+      label: "Budgets",
+    },
+    {
       href: PROTECTED_ROUTES.REPORTS,
       label: "Reports",
     },
@@ -41,7 +45,7 @@ const Navbar = () => {
       <header
         className={cn(
           "w-full px-4 py-3 pb-3 lg:px-14 bg-[var(--secondary-dark-color)] text-white ",
-          pathname === PROTECTED_ROUTES.OVERVIEW && "!pb-3"
+          pathname === PROTECTED_ROUTES.OVERVIEW && "!pb-3",
         )}
       >
         <div className="w-full flex h-14 max-w-[var(--max-width)] items-center mx-auto">
@@ -74,13 +78,11 @@ const Navbar = () => {
                      text-white/60 focus:bg-white/30
                      transtion !bg-transparent !text-[14.5px]
                      `,
-                    pathname === route.href && "text-white"
+                    pathname === route.href && "text-white",
                   )}
                   asChild
                 >
-                  <NavLink to={route.href}>
-                    {route.label}
-                  </NavLink>
+                  <NavLink to={route.href}>{route.label}</NavLink>
                 </Button>
               ))}
             </nav>
@@ -99,13 +101,11 @@ const Navbar = () => {
                        hover:bg-white/10 hover:text-black border-none
                        text-black/70 focus:bg-white/30
                        transtion !bg-transparent justify-start`,
-                        pathname === route.href && "!bg-black/10 text-black"
+                        pathname === route.href && "!bg-black/10 text-black",
                       )}
                       asChild
                     >
-                      <NavLink to={route.href}>
-                        {route.label}
-                      </NavLink>
+                      <NavLink to={route.href}>{route.label}</NavLink>
                     </Button>
                   ))}
                 </nav>

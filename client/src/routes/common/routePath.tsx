@@ -13,6 +13,7 @@ export const AUTH_ROUTES = {
 export const PROTECTED_ROUTES = {
   OVERVIEW: "/overview",
   TRANSACTIONS: "/transactions",
+  BUDGETS: "/budgets",
   REPORTS: "/reports",
   SETTINGS: "/settings",
   SETTINGS_APPEARANCE: "/settings/appearance",
