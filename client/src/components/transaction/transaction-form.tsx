@@ -85,6 +85,7 @@ const TransactionForm = (props: {
   const { onCloseDrawer, isEdit = false, transactionId } = props;
 
   const [isScanning, setIsScanning] = useState(false);
+  const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
 
   const { data, isLoading } = useGetSingleTransactionQuery(
     transactionId || "",
@@ -139,11 +140,16 @@ const TransactionForm = (props: {
   );
 
   const handleScanComplete = (data: AIScanReceiptData) => {
+    const scannedType =
+      data.type === _TRANSACTION_TYPE.INCOME
+        ? _TRANSACTION_TYPE.INCOME
+        : _TRANSACTION_TYPE.EXPENSE;
+
     form.reset({
       ...form.getValues(),
       title: data.title || "",
       amount: data.amount.toString(),
-      type: data.type || _TRANSACTION_TYPE.EXPENSE,
+      type: scannedType,
       category: data.category?.toLowerCase() || "",
       date: new Date(data.date),
       paymentMethod: data.paymentMethod || "",
@@ -215,8 +221,8 @@ const TransactionForm = (props: {
                 <FormItem className="space-y-1">
                   <FormLabel>Transaction Type</FormLabel>
                   <RadioGroup
+                    value={field.value}
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
                     className="flex space-x-2"
                     disabled={isScanning}
                   >
@@ -337,7 +343,11 @@ const TransactionForm = (props: {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date</FormLabel>
-                  <Popover modal={false}>
+                  <Popover
+                    modal={false}
+                    open={isDatePopoverOpen}
+                    onOpenChange={setIsDatePopoverOpen}
+                  >
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -364,8 +374,10 @@ const TransactionForm = (props: {
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
-                          console.log(date);
-                          field.onChange(date); // This updates the form value
+                          field.onChange(date);
+                          if (date) {
+                            setIsDatePopoverOpen(false);
+                          }
                         }}
                         disabled={(date) => date < new Date("2023-01-01")}
                         initialFocus

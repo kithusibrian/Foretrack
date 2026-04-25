@@ -1,31 +1,74 @@
 import { PaymentMethodEnum } from "../models/transaction.model";
 
 export const receiptPrompt = `
-You are a financial assistant that helps users analyze and extract transaction details from receipt image (base64 encoded)
-Analyze this receipt image (base64 encoded) and extract transaction details matching this exact JSON format:
+You are a finance data extraction assistant.
+Your job is to read a purchase receipt image and return ONE valid JSON object only.
+
+Classify the transaction from what was purchased (line items), not from the merchant name alone.
+
+Return this exact JSON shape:
 {
-  "title": "string",          // Merchant/store name or brief description
-  "amount": number,           // Total amount (positive number)
-  "date": "ISO date string",  // Transaction date in YYYY-MM-DD format
-  "description": "string",    // Items purchased summary (max 50 words)
-  "category": "string",       // category of the transaction 
-  "type": "EXPENSE"           // Always "EXPENSE" for receipts
-  "paymentMethod": "string",  // One of: ${Object.values(PaymentMethodEnum).join(",")}
+  "title": "string",
+  "amount": number,
+  "date": "YYYY-MM-DD",
+  "description": "string",
+  "category": "string",
+  "type": "EXPENSE or INCOME",
+  "paymentMethod": "string"
 }
 
 Rules:
-1. Amount must be positive
-2. Date must be valid and in ISO format
-3. Category must match our enum values
-4. If uncertain about any field, omit it
-5. If not a receipt, return {}
+1. Infer transaction type from receipt context:
+  - Use "EXPENSE" for purchase receipts (default behavior)
+  - Use "INCOME" only for receipts that clearly indicate money received (refund payout, cashback payout, reimbursement, salary/payment received)
+  - If unclear, default to "EXPENSE"
+2. Amount must be the final total paid (positive number). Prefer grand total over subtotal.
+3. Date must be valid in YYYY-MM-DD.
+4. paymentMethod must be one of: ${Object.values(PaymentMethodEnum).join(", ")}. Use "OTHER" if unknown.
+5. category must be one of these lowercase values only:
+  - For EXPENSE: groceries, dining, transportation, utilities, entertainment, shopping, healthcare, travel, housing, other
+  - For INCOME: income, investments, other
+6. For EXPENSE, infer category from line items using these guidelines:
+   - groceries: supermarket food, household consumables
+   - dining: restaurant, cafe, takeaway meals, bar
+   - transportation: fuel, taxi, ride-hailing, bus/train fare, parking
+   - utilities: electricity, water, gas, internet, phone bill
+   - entertainment: cinema, games, streaming, events
+   - shopping: clothing, electronics, general retail goods
+   - healthcare: pharmacy, clinic, hospital, medical supplies
+   - travel: hotels, flights, travel bookings
+   - housing: rent, home maintenance services
+   - other: when none clearly match
+  - Use evidence-based categorization from line items and receipt context.
+  - Prioritize item-level evidence over merchant name. Merchant name is only a weak tie-breaker.
+  - Choose the category with the strongest item evidence and largest spend share.
+  - Category cues:
+    - groceries: supermarket staples/household consumables (milk, eggs, bread, rice, vegetables, detergent)
+    - dining: restaurant/cafe/takeaway meals, menu items, table/food service bills
+    - transportation: fuel, fare, taxi, ride-hailing, bus/train tickets, parking, tolls
+    - healthcare: pharmacy medicines, clinic/hospital services, prescriptions, lab tests
+    - shopping: clothing, electronics, personal/retail goods
+    - utilities: electricity, water, gas, internet, phone bills
+    - travel: hotel stays, flights, booking charges, travel agency items
+    - housing: rent, home maintenance, home service charges
+    - entertainment: cinema, games, events, subscriptions
+  - Do not overuse "groceries". Only select it when grocery/household item evidence is explicit.
+  - If evidence is mixed, choose the dominant spend category; if still ambiguous, return "other".
+7. For INCOME:
+  - income: salary, wages, freelance payment, reimbursement, refund payout
+  - investments: dividends, interest, capital gains, investment proceeds
+  - other: when none clearly match
+8. If multiple item groups exist, choose the category with the highest spend.
+8. description should briefly summarize key items (max 30 words).
+9. If the image is not a receipt or key fields are unreadable, return {}.
+10. Output JSON only. No markdown, no code fences, no extra text.
 
 Example valid response:
 {
-  "title": "Walmart Groceries",
+  "title": "Carrefour",
   "amount": 58.43,
   "date": "2025-05-08",
-  "description": "Groceries: milk, eggs, bread",
+  "description": "Milk, eggs, bread, fruit",
   "category": "groceries",
   "paymentMethod": "CARD",
   "type": "EXPENSE"

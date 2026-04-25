@@ -14,6 +14,303 @@ import { receiptPrompt } from "../utils/prompt";
 
 const normalizeCategory = (category: string) => category.trim().toLowerCase();
 
+const allowedExpenseReceiptCategories = new Set([
+  "groceries",
+  "dining",
+  "transportation",
+  "utilities",
+  "entertainment",
+  "shopping",
+  "healthcare",
+  "travel",
+  "housing",
+  "other",
+]);
+
+const allowedIncomeReceiptCategories = new Set([
+  "income",
+  "investments",
+  "other",
+]);
+
+const expenseCategoryKeywords: Record<string, string[]> = {
+  groceries: [
+    "milk",
+    "bread",
+    "eggs",
+    "rice",
+    "flour",
+    "sugar",
+    "vegetable",
+    "fruit",
+    "supermarket",
+    "grocery",
+    "foodstuff",
+  ],
+  dining: [
+    "restaurant",
+    "cafe",
+    "coffee",
+    "latte",
+    "burger",
+    "pizza",
+    "meal",
+    "takeaway",
+    "bar",
+  ],
+  transportation: [
+    "fuel",
+    "petrol",
+    "diesel",
+    "uber",
+    "bolt",
+    "taxi",
+    "bus",
+    "train",
+    "fare",
+    "parking",
+  ],
+  utilities: [
+    "electricity",
+    "water",
+    "internet",
+    "wifi",
+    "airtime",
+    "mobile bill",
+    "utility",
+    "token",
+  ],
+  entertainment: [
+    "cinema",
+    "movie",
+    "netflix",
+    "showmax",
+    "spotify",
+    "game",
+    "event",
+    "concert",
+  ],
+  shopping: [
+    "clothes",
+    "shirt",
+    "shoes",
+    "electronics",
+    "phone",
+    "accessory",
+    "retail",
+  ],
+  healthcare: [
+    "pharmacy",
+    "clinic",
+    "hospital",
+    "medicine",
+    "drug",
+    "consultation",
+    "lab",
+  ],
+  travel: ["hotel", "flight", "airline", "booking", "airbnb", "trip"],
+  housing: ["rent", "landlord", "apartment", "house", "maintenance"],
+};
+
+const groceryEvidenceKeywords = [
+  "milk",
+  "bread",
+  "eggs",
+  "rice",
+  "flour",
+  "sugar",
+  "tomato",
+  "onion",
+  "vegetable",
+  "fruit",
+  "banana",
+  "apple",
+  "meat",
+  "chicken",
+  "fish",
+  "detergent",
+  "soap",
+  "toilet paper",
+  "cooking oil",
+  "grocery",
+  "supermarket",
+];
+
+const hasGroceryEvidence = (title?: string, description?: string) => {
+  const context = [title, description].filter(Boolean).join(" ").toLowerCase();
+  if (!context) return false;
+
+  const hits = groceryEvidenceKeywords.reduce(
+    (acc, keyword) => (context.includes(keyword) ? acc + 1 : acc),
+    0,
+  );
+
+  // Require at least one clear grocery signal before accepting groceries.
+  return hits >= 1;
+};
+
+const inferExpenseCategoryFromContext = (
+  title?: string,
+  description?: string,
+) => {
+  const context = [title, description].filter(Boolean).join(" ").toLowerCase();
+  if (!context) return undefined;
+
+  let bestCategory: string | undefined;
+  let bestScore = 0;
+
+  Object.entries(expenseCategoryKeywords).forEach(([category, keywords]) => {
+    const score = keywords.reduce(
+      (acc, keyword) => (context.includes(keyword) ? acc + 1 : acc),
+      0,
+    );
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestCategory = category;
+    }
+  });
+
+  return bestScore > 0 ? bestCategory : undefined;
+};
+
+const normalizeReceiptType = (data: {
+  type?: string;
+  title?: string;
+  description?: string;
+  category?: string;
+}) => {
+  const rawType = data.type?.trim().toUpperCase();
+
+  const receiptContext = [data.title, data.description, data.category]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const expenseHints = [
+    "receipt",
+    "invoice",
+    "tax invoice",
+    "subtotal",
+    "total",
+    "vat",
+    "item",
+    "qty",
+    "cashier",
+    "grocery",
+    "supermarket",
+    "restaurant",
+    "dining",
+    "fuel",
+    "transport",
+    "pharmacy",
+    "bill",
+    "purchase",
+  ];
+
+  const incomeHints = [
+    "refund payout",
+    "refund received",
+    "reimbursement",
+    "reimbursement received",
+    "salary",
+    "wage",
+    "payroll",
+    "payment received",
+    "deposit received",
+    "commission",
+    "dividend",
+    "interest",
+    "credit note",
+    "credit memo",
+  ];
+
+  const hasExpenseSignals = expenseHints.some((hint) =>
+    receiptContext.includes(hint),
+  );
+  const hasIncomeSignals = incomeHints.some((hint) =>
+    receiptContext.includes(hint),
+  );
+
+  if (hasExpenseSignals && !hasIncomeSignals) {
+    return TransactionTypeEnum.EXPENSE;
+  }
+
+  if (hasIncomeSignals && !hasExpenseSignals) {
+    return TransactionTypeEnum.INCOME;
+  }
+
+  // If both appear, this is usually a purchase receipt with a refund/credit line item.
+  if (hasIncomeSignals && hasExpenseSignals) {
+    return TransactionTypeEnum.EXPENSE;
+  }
+
+  if (rawType === TransactionTypeEnum.EXPENSE) {
+    return TransactionTypeEnum.EXPENSE;
+  }
+
+  // Never default to income on ambiguous receipts.
+  if (rawType === TransactionTypeEnum.INCOME) {
+    return TransactionTypeEnum.EXPENSE;
+  }
+
+  // Receipt scans default to expense when intent is ambiguous.
+  return TransactionTypeEnum.EXPENSE;
+};
+
+const normalizeReceiptCategory = (
+  category: string | undefined,
+  type: TransactionTypeEnum,
+) => {
+  if (!category)
+    return type === TransactionTypeEnum.INCOME ? "income" : "other";
+
+  const normalized = normalizeCategory(category);
+
+  const expenseAliasMap: Record<string, string> = {
+    food: "dining",
+    restaurant: "dining",
+    restaurants: "dining",
+    transport: "transportation",
+    transit: "transportation",
+    fuel: "transportation",
+    bills: "utilities",
+    medical: "healthcare",
+    health: "healthcare",
+    rent: "housing",
+  };
+
+  const incomeAliasMap: Record<string, string> = {
+    salary: "income",
+    wages: "income",
+    payroll: "income",
+    freelance: "income",
+    commission: "income",
+    reimbursement: "income",
+    refund: "income",
+    cashback: "income",
+    dividend: "investments",
+    interest: "investments",
+    investments: "investments",
+    investment: "investments",
+  };
+
+  const aliasMap =
+    type === TransactionTypeEnum.INCOME ? incomeAliasMap : expenseAliasMap;
+
+  const mappedCategory = aliasMap[normalized] || normalized;
+
+  if (type === TransactionTypeEnum.INCOME) {
+    return allowedIncomeReceiptCategories.has(mappedCategory)
+      ? mappedCategory
+      : "income";
+  }
+
+  return allowedExpenseReceiptCategories.has(mappedCategory)
+    ? mappedCategory
+    : "other";
+};
+
 export const createTransactionService = async (
   body: CreateTransactionType,
   userId: string,
@@ -331,14 +628,42 @@ export const scanReceiptService = async (
     }
 
     // Return structured receipt
+    const normalizedType = normalizeReceiptType(data);
+    let normalizedCategory = normalizeReceiptCategory(
+      data.category,
+      normalizedType,
+    );
+
+    if (normalizedType === TransactionTypeEnum.EXPENSE) {
+      const inferredCategory = inferExpenseCategoryFromContext(
+        data.title,
+        data.description,
+      );
+      const groceryEvidence = hasGroceryEvidence(data.title, data.description);
+
+      if (normalizedCategory === "groceries" && !groceryEvidence) {
+        normalizedCategory = inferredCategory || "other";
+      }
+
+      // Prevent the model from defaulting to groceries when text points elsewhere.
+      if (
+        inferredCategory &&
+        (normalizedCategory === "other" ||
+          (normalizedCategory === "groceries" &&
+            inferredCategory !== "groceries"))
+      ) {
+        normalizedCategory = inferredCategory;
+      }
+    }
+
     return {
       title: data.title || "Receipt",
       amount: data.amount,
       date: data.date,
       description: data.description,
-      category: data.category,
+      category: normalizedCategory,
       paymentMethod: data.paymentMethod,
-      type: data.type,
+      type: normalizedType,
       receiptUrl: file.path,
     };
   } catch (error: any) {
