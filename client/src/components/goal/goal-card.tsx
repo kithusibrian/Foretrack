@@ -38,12 +38,11 @@ export default function GoalCard({ goal }: Props) {
       }).format(new Date(goal.targetDate as string))
     : "No deadline";
 
-  const progressTone =
-    isCompleted
-      ? "from-emerald-500 to-green-500"
-      : percent >= 70
-        ? "from-cyan-500 to-sky-500"
-        : "from-amber-500 to-orange-500";
+  const progressTone = isCompleted
+    ? "from-emerald-500 to-green-500"
+    : percent >= 70
+      ? "from-cyan-500 to-sky-500"
+      : "from-amber-500 to-orange-500";
 
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-gradient-to-b from-white to-slate-50/80 p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
@@ -61,7 +60,9 @@ export default function GoalCard({ goal }: Props) {
         <div className="space-y-1">
           <h3 className="text-sm font-semibold text-slate-900">{goal.title}</h3>
           {goal.description ? (
-            <p className="line-clamp-1 text-xs text-slate-500">{goal.description}</p>
+            <p className="line-clamp-1 text-xs text-slate-500">
+              {goal.description}
+            </p>
           ) : null}
 
           <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-2 py-1 text-[11px] font-medium text-slate-600">
@@ -106,7 +107,9 @@ export default function GoalCard({ goal }: Props) {
               <div className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
                 Saved
               </div>
-              <div className="text-sm font-semibold text-slate-900">{fmt(current)}</div>
+              <div className="text-sm font-semibold text-slate-900">
+                {fmt(current)}
+              </div>
             </div>
           </div>
         </div>
@@ -118,7 +121,9 @@ export default function GoalCard({ goal }: Props) {
             <Flag className="h-3.5 w-3.5" />
             Target {fmt(target)}
           </span>
-          <span className="font-semibold text-slate-700">{percent.toFixed(1)}%</span>
+          <span className="font-semibold text-slate-700">
+            {percent.toFixed(1)}%
+          </span>
         </div>
 
         <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200/70">

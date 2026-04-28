@@ -92,10 +92,10 @@ const Navbar = () => {
       href: PROTECTED_ROUTES.TRANSACTIONS,
       label: "Transactions",
     },
-      {
-        href: PROTECTED_ROUTES.GOALS,
-        label: "Goals",
-      },
+    {
+      href: PROTECTED_ROUTES.GOALS,
+      label: "Goals",
+    },
     {
       href: PROTECTED_ROUTES.BUDGETS,
       label: "Budgets",

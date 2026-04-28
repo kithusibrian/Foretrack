@@ -16,74 +16,86 @@ import {
   updateGoalService,
 } from "../services/goal.service";
 
-export const createGoalController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
-  const body = createGoalSchema.parse(req.body);
+export const createGoalController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const body = createGoalSchema.parse(req.body);
 
-  const goal = await createGoalService(userId, body);
+    const goal = await createGoalService(userId, body);
 
-  return res.status(HTTPSTATUS.CREATED).json({
-    message: "Goal created successfully",
-    data: goal,
-  });
-});
+    return res.status(HTTPSTATUS.CREATED).json({
+      message: "Goal created successfully",
+      data: goal,
+    });
+  },
+);
 
-export const getAllGoalsController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+export const getAllGoalsController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
 
-  const goals = await getAllGoalsService(userId);
+    const goals = await getAllGoalsService(userId);
 
-  return res.status(HTTPSTATUS.OK).json({
-    message: "Goals fetched successfully",
-    data: goals,
-  });
-});
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Goals fetched successfully",
+      data: goals,
+    });
+  },
+);
 
-export const getGoalByIdController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
-  const goalId = goalIdSchema.parse(req.params.id);
+export const getGoalByIdController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const goalId = goalIdSchema.parse(req.params.id);
 
-  const goal = await getGoalByIdService(userId, goalId);
+    const goal = await getGoalByIdService(userId, goalId);
 
-  return res.status(HTTPSTATUS.OK).json({
-    message: "Goal fetched successfully",
-    data: goal,
-  });
-});
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Goal fetched successfully",
+      data: goal,
+    });
+  },
+);
 
-export const updateGoalController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
-  const goalId = goalIdSchema.parse(req.params.id);
-  const body = updateGoalSchema.parse(req.body);
+export const updateGoalController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const goalId = goalIdSchema.parse(req.params.id);
+    const body = updateGoalSchema.parse(req.body);
 
-  const goal = await updateGoalService(userId, goalId, body);
+    const goal = await updateGoalService(userId, goalId, body);
 
-  return res.status(HTTPSTATUS.OK).json({
-    message: "Goal updated successfully",
-    data: goal,
-  });
-});
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Goal updated successfully",
+      data: goal,
+    });
+  },
+);
 
-export const deleteGoalController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
-  const goalId = goalIdSchema.parse(req.params.id);
+export const deleteGoalController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const goalId = goalIdSchema.parse(req.params.id);
 
-  await deleteGoalService(userId, goalId);
+    await deleteGoalService(userId, goalId);
 
-  return res.status(HTTPSTATUS.OK).json({
-    message: "Goal deleted successfully",
-  });
-});
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Goal deleted successfully",
+    });
+  },
+);
 
-export const addContributionController = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req.user?._id;
-  const goalId = goalIdSchema.parse(req.params.id);
-  const body = contributeSchema.parse(req.body);
+export const addContributionController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const goalId = goalIdSchema.parse(req.params.id);
+    const body = contributeSchema.parse(req.body);
 
-  const goal = await addContributionService(userId, goalId, body);
+    const goal = await addContributionService(userId, goalId, body);
 
-  return res.status(HTTPSTATUS.OK).json({
-    message: "Contribution added successfully",
-    data: goal,
-  });
-});
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Contribution added successfully",
+      data: goal,
+    });
+  },
+);

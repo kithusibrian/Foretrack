@@ -374,7 +374,9 @@ const ActionsCell = ({ row }: { row: any }) => {
             onSelect={(e) => {
               e.preventDefault();
               if (alreadyLinked) return;
-              setAssignAmount(String(Math.abs(Number(transaction.amount || 0))));
+              setAssignAmount(
+                String(Math.abs(Number(transaction.amount || 0))),
+              );
               setAssignDialogOpen(true);
             }}
           >
@@ -417,7 +419,10 @@ const ActionsCell = ({ row }: { row: any }) => {
             <div className="space-y-1.5">
               <Label htmlFor={`goal-select-${transactionId}`}>Goal</Label>
               <Select value={selectedGoalId} onValueChange={setSelectedGoalId}>
-                <SelectTrigger id={`goal-select-${transactionId}`} className="w-full">
+                <SelectTrigger
+                  id={`goal-select-${transactionId}`}
+                  className="w-full"
+                >
                   <SelectValue placeholder="Select a goal" />
                 </SelectTrigger>
                 <SelectContent>
@@ -431,7 +436,9 @@ const ActionsCell = ({ row }: { row: any }) => {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor={`amount-${transactionId}`}>Contribution Amount (KES)</Label>
+              <Label htmlFor={`amount-${transactionId}`}>
+                Contribution Amount (KES)
+              </Label>
               <Input
                 id={`amount-${transactionId}`}
                 type="number"
@@ -453,7 +460,10 @@ const ActionsCell = ({ row }: { row: any }) => {
             >
               Cancel
             </Button>
-            <Button onClick={handleAssignToGoal} disabled={isAssigning || goals.length === 0}>
+            <Button
+              onClick={handleAssignToGoal}
+              disabled={isAssigning || goals.length === 0}
+            >
               Assign Contribution
             </Button>
           </DialogFooter>

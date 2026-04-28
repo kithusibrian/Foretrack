@@ -8,9 +8,13 @@ import {
   UpdateGoalType,
 } from "../validators/goal.validator";
 
-export const createGoalService = async (userId: string, body: CreateGoalType) => {
+export const createGoalService = async (
+  userId: string,
+  body: CreateGoalType,
+) => {
   const existing = await GoalModel.findOne({ userId, title: body.title });
-  if (existing) throw new BadRequestException("A goal with this title already exists");
+  if (existing)
+    throw new BadRequestException("A goal with this title already exists");
 
   const goal = await GoalModel.create({
     ...body,
@@ -44,7 +48,10 @@ export const updateGoalService = async (
   goal.set({ ...body });
 
   // if targetAmount provided and currentAmount >= targetAmount, mark completed
-  if (body.targetAmount !== undefined && goal.currentAmount >= body.targetAmount) {
+  if (
+    body.targetAmount !== undefined &&
+    goal.currentAmount >= body.targetAmount
+  ) {
     goal.status = GoalStatusEnum.COMPLETED;
   }
 
@@ -70,11 +77,16 @@ export const addContributionService = async (
 
   // If transactionId provided, prevent re-linking and ensure ownership.
   if (body.transactionId) {
-    const txn = await TransactionModel.findOne({ _id: body.transactionId, userId });
+    const txn = await TransactionModel.findOne({
+      _id: body.transactionId,
+      userId,
+    });
     if (!txn) throw new NotFoundException("Transaction not found");
 
     if (txn.isContribution && txn.goalId) {
-      throw new BadRequestException("This transaction is already linked to a goal contribution");
+      throw new BadRequestException(
+        "This transaction is already linked to a goal contribution",
+      );
     }
 
     // Link transaction to the goal and mark as contribution.
@@ -84,7 +96,8 @@ export const addContributionService = async (
   }
 
   // amount is expected in decimal (KES). model setters convert to cents
-  goal.currentAmount = (goal.currentAmount ?? 0) + (body.amount as unknown as number);
+  goal.currentAmount =
+    (goal.currentAmount ?? 0) + (body.amount as unknown as number);
 
   if (goal.targetAmount > 0 && goal.currentAmount >= goal.targetAmount) {
     goal.status = GoalStatusEnum.COMPLETED;

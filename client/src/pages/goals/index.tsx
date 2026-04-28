@@ -21,7 +21,14 @@ import PageLayout from "@/components/page-layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trash2, Pencil, PlusCircle, HandCoins, CalendarDays, Target } from "lucide-react";
+import {
+  Trash2,
+  Pencil,
+  PlusCircle,
+  HandCoins,
+  CalendarDays,
+  Target,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -67,9 +74,12 @@ export default function GoalsPage() {
   const [editing, setEditing] = useState<GoalItem | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [contributeOpen, setContributeOpen] = useState(false);
-  const [contributionGoal, setContributionGoal] = useState<GoalItem | null>(null);
+  const [contributionGoal, setContributionGoal] = useState<GoalItem | null>(
+    null,
+  );
   const [contributionAmount, setContributionAmount] = useState("");
-  const [contributionTransactionId, setContributionTransactionId] = useState("");
+  const [contributionTransactionId, setContributionTransactionId] =
+    useState("");
   const [isCreateDateOpen, setIsCreateDateOpen] = useState(false);
   const [isEditDateOpen, setIsEditDateOpen] = useState(false);
 
@@ -79,8 +89,11 @@ export default function GoalsPage() {
   });
 
   const goals: GoalItem[] = goalsData?.data || [];
-  const transactions = (transactionsData?.transactions || []) as TransactionType[];
-  const availableTransactions = transactions.filter((item) => !item.isContribution);
+  const transactions = (transactionsData?.transactions ||
+    []) as TransactionType[];
+  const availableTransactions = transactions.filter(
+    (item) => !item.isContribution,
+  );
 
   const totalTarget = useMemo(
     () => goals.reduce((sum, item) => sum + Number(item.targetAmount || 0), 0),
@@ -136,7 +149,9 @@ export default function GoalsPage() {
 
   const handleSelectContributionTransaction = (transactionId: string) => {
     setContributionTransactionId(transactionId);
-    const selected = availableTransactions.find((item) => (item.id || item._id) === transactionId);
+    const selected = availableTransactions.find(
+      (item) => (item.id || item._id) === transactionId,
+    );
     if (selected) {
       setContributionAmount(String(Math.abs(Number(selected.amount || 0))));
     }
@@ -282,7 +297,9 @@ export default function GoalsPage() {
                   <PopoverContent className="w-auto p-0" align="start">
                     <CalendarComponent
                       mode="single"
-                      selected={form.targetDate ? new Date(form.targetDate) : undefined}
+                      selected={
+                        form.targetDate ? new Date(form.targetDate) : undefined
+                      }
                       onSelect={(date) => {
                         setForm({
                           ...form,
@@ -296,7 +313,11 @@ export default function GoalsPage() {
                 </Popover>
               </div>
 
-              <Button type="submit" disabled={!canSubmitCreate} className="w-full">
+              <Button
+                type="submit"
+                disabled={!canSubmitCreate}
+                className="w-full"
+              >
                 Create Goal
               </Button>
             </form>
@@ -319,11 +340,15 @@ export default function GoalsPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Total Saved</p>
-                  <p className="text-xl font-semibold text-emerald-700">KSh {totalSaved.toFixed(2)}</p>
+                  <p className="text-xl font-semibold text-emerald-700">
+                    KSh {totalSaved.toFixed(2)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Total Target</p>
-                  <p className="text-xl font-semibold text-slate-800">KSh {totalTarget.toFixed(2)}</p>
+                  <p className="text-xl font-semibold text-slate-800">
+                    KSh {totalTarget.toFixed(2)}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -335,7 +360,9 @@ export default function GoalsPage() {
             </CardHeader>
             <CardContent>
               {isLoading ? (
-                <div className="text-sm text-muted-foreground">Loading goals...</div>
+                <div className="text-sm text-muted-foreground">
+                  Loading goals...
+                </div>
               ) : (
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {goals.map((goal) => (
@@ -375,7 +402,8 @@ export default function GoalsPage() {
 
                   {goals.length === 0 && (
                     <div className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">
-                      No goals yet. Create your first goal from the form on the left.
+                      No goals yet. Create your first goal from the form on the
+                      left.
                     </div>
                   )}
                 </div>
@@ -465,7 +493,11 @@ export default function GoalsPage() {
                   <PopoverContent className="w-auto p-0" align="start">
                     <CalendarComponent
                       mode="single"
-                      selected={editing.targetDate ? new Date(editing.targetDate) : undefined}
+                      selected={
+                        editing.targetDate
+                          ? new Date(editing.targetDate)
+                          : undefined
+                      }
                       onSelect={(date) => {
                         setEditing({
                           ...editing,
@@ -511,7 +543,8 @@ export default function GoalsPage() {
           <DialogHeader>
             <DialogTitle>Add Contribution</DialogTitle>
             <DialogDescription>
-              Add an amount to {contributionGoal?.title || "this goal"}. You can optionally attach an existing transaction ID.
+              Add an amount to {contributionGoal?.title || "this goal"}. You can
+              optionally attach an existing transaction ID.
             </DialogDescription>
           </DialogHeader>
 
@@ -530,12 +563,17 @@ export default function GoalsPage() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="contribution-transaction-id">Link Existing Transaction (Optional)</Label>
+              <Label htmlFor="contribution-transaction-id">
+                Link Existing Transaction (Optional)
+              </Label>
               <Select
                 value={contributionTransactionId}
                 onValueChange={handleSelectContributionTransaction}
               >
-                <SelectTrigger id="contribution-transaction-id" className="w-full">
+                <SelectTrigger
+                  id="contribution-transaction-id"
+                  className="w-full"
+                >
                   <SelectValue placeholder="Select a transaction" />
                 </SelectTrigger>
                 <SelectContent>

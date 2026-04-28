@@ -16,16 +16,22 @@ export const goalApi = apiClient.injectEndpoints({
       }),
       providesTags: ["goals"],
     }),
-    createGoal: builder.mutation<any, { title: string; targetAmount: number; description?: string; targetDate?: string }>(
+    createGoal: builder.mutation<
+      any,
       {
-        query: (body) => ({
-          url: "/goal/create",
-          method: "POST",
-          body,
-        }),
-        invalidatesTags: ["goals"],
-      },
-    ),
+        title: string;
+        targetAmount: number;
+        description?: string;
+        targetDate?: string;
+      }
+    >({
+      query: (body) => ({
+        url: "/goal/create",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["goals"],
+    }),
     updateGoal: builder.mutation<any, { id: string; body: any }>({
       query: ({ id, body }) => ({
         url: `/goal/update/${id}`,
@@ -41,16 +47,17 @@ export const goalApi = apiClient.injectEndpoints({
       }),
       invalidatesTags: ["goals"],
     }),
-    contributeToGoal: builder.mutation<any, { id: string; amount: number; transactionId?: string }>(
-      {
-        query: ({ id, ...body }) => ({
-          url: `/goal/${id}/contribute`,
-          method: "POST",
-          body,
-        }),
-        invalidatesTags: ["goals", "transactions"],
-      },
-    ),
+    contributeToGoal: builder.mutation<
+      any,
+      { id: string; amount: number; transactionId?: string }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `/goal/${id}/contribute`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["goals", "transactions"],
+    }),
   }),
 });
 

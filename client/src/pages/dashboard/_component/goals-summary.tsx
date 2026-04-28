@@ -5,8 +5,14 @@ export default function GoalsSummary() {
   const { data, isLoading } = useGetAllGoalsQuery();
   const goals = data?.data ?? [];
 
-  const totalTarget = goals.reduce((s: number, g: any) => s + (g.targetAmount || 0), 0);
-  const totalCurrent = goals.reduce((s: number, g: any) => s + (g.currentAmount || 0), 0);
+  const totalTarget = goals.reduce(
+    (s: number, g: any) => s + (g.targetAmount || 0),
+    0,
+  );
+  const totalCurrent = goals.reduce(
+    (s: number, g: any) => s + (g.currentAmount || 0),
+    0,
+  );
 
   return (
     <div className="bg-white rounded-lg shadow p-4">
@@ -27,10 +33,14 @@ export default function GoalsSummary() {
           <div>KSh {Number(totalTarget).toFixed(2)}</div>
         </div>
         <div className="grid grid-cols-1 gap-3 mt-2">
-          {isLoading ? <div>Loading...</div> : goals.slice(0, 3).map((g: any) => (
-            <GoalCard key={g._id} goal={g} />
-          ))}
-          {goals.length === 0 && <div className="text-sm text-muted-foreground">No goals yet</div>}
+          {isLoading ? (
+            <div>Loading...</div>
+          ) : (
+            goals.slice(0, 3).map((g: any) => <GoalCard key={g._id} goal={g} />)
+          )}
+          {goals.length === 0 && (
+            <div className="text-sm text-muted-foreground">No goals yet</div>
+          )}
         </div>
       </div>
     </div>
