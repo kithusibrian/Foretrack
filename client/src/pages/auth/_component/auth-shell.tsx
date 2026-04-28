@@ -70,7 +70,7 @@ export function AuthShell({
       <div className="relative grid min-h-svh lg:grid-cols-[1.08fr_0.92fr]">
         <section className="order-2 relative flex flex-col justify-between border-b border-cyan-500/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.54))] px-4 py-6 backdrop-blur-2xl dark:border-cyan-400/10 dark:bg-[linear-gradient(180deg,rgba(8,13,24,0.78),rgba(11,17,31,0.62))] sm:px-6 lg:order-1 lg:border-b-0 lg:border-r lg:px-10 lg:py-8">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.08),transparent_26%),radial-gradient(circle_at_80%_40%,rgba(99,102,241,0.08),transparent_24%)]" />
-          <div className="space-y-8 [animation:authRiseIn_600ms_ease-out_both]">
+          <div className="space-y-8">
             <div className="flex flex-wrap items-center justify-between gap-3 sm:flex-nowrap sm:gap-4">
               <Logo url="/" variant="auth" />
               <Badge
@@ -159,7 +159,7 @@ export function AuthShell({
             </div>
           </div>
 
-          <div className="mt-8 rounded-[1.75rem] border border-cyan-500/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.55))] p-5 shadow-xl shadow-cyan-500/5 backdrop-blur-sm [animation:authRiseIn_700ms_ease-out_both] dark:border-cyan-400/10 dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(15,23,42,0.62))]">
+          <div className="mt-8 rounded-[1.75rem] border border-cyan-500/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.55))] p-5 shadow-xl shadow-cyan-500/5 backdrop-blur-sm dark:border-cyan-400/10 dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(15,23,42,0.62))]">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700/80 dark:text-cyan-300/80">
@@ -212,30 +212,28 @@ export function AuthShell({
         <section className="order-1 flex items-center justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:order-2">
           <Card
             className={cn(
-              "relative w-full max-w-xl overflow-hidden rounded-[2rem] border border-white/40 bg-[url('/banner.jpeg')] bg-cover bg-center shadow-[0_34px_90px_-28px_rgba(14,165,233,0.42)] ring-1 ring-cyan-500/15 [animation:authFloatIn_700ms_ease-out_both] dark:border-cyan-300/25",
+              "w-full max-w-xl overflow-hidden border-cyan-500/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.78))] shadow-[0_30px_90px_-32px_rgba(14,165,233,0.38)] ring-1 ring-cyan-500/10 backdrop-blur-2xl dark:border-cyan-400/15 dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(15,23,42,0.76))]",
             )}
           >
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.92),rgba(255,255,255,0.84))] dark:bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.12),transparent_38%),linear-gradient(180deg,rgba(10,19,34,0.93),rgba(12,22,38,0.86))]" />
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/45 to-transparent dark:from-cyan-100/5" />
-            <CardContent className="relative space-y-6 p-5 sm:p-6 md:p-8">
+            <CardContent className="space-y-6 p-5 sm:p-6 md:p-8">
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700/80 dark:text-cyan-300/80">
                   {formTag}
                 </p>
-                <h2 className="text-[1.65rem] font-semibold tracking-tight text-slate-900 [text-shadow:0_1px_0_rgba(255,255,255,0.35)] dark:text-slate-50 sm:text-[1.85rem] md:text-[2.2rem]">
+                <h2 className="text-[1.65rem] font-semibold tracking-tight sm:text-[1.85rem] md:text-[2.2rem]">
                   {formTitle}
                 </h2>
-                <p className="text-sm leading-6 text-slate-800 dark:text-slate-100 sm:text-base sm:leading-7">
+                <p className="text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
                   {formDescription}
                 </p>
               </div>
 
-              <Separator className="bg-slate-400/60 dark:bg-cyan-100/20" />
+              <Separator className="bg-border/60" />
 
               {children}
 
               {formNote && (
-                <p className="text-sm leading-6 text-slate-800/95 dark:text-slate-100/95">
+                <p className="text-sm leading-6 text-muted-foreground">
                   {formNote}
                 </p>
               )}

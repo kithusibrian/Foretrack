@@ -199,7 +199,7 @@ const SignUpForm = () => {
                   8+ characters
                 </span>
                 <span className="rounded-full border border-border/60 bg-background/70 px-2.5 py-1 text-xs">
-                  At Least 1 Uppercase Letter
+                  Uppercase
                 </span>
                 <span className="rounded-full border border-border/60 bg-background/70 px-2.5 py-1 text-xs">
                   Number

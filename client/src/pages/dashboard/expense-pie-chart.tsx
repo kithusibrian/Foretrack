@@ -1,4 +1,4 @@
-import { Label, Pie, PieChart, Cell } from "recharts";
+﻿import { Label, Pie, PieChart, Cell } from "recharts";
 
 import {
   Card,
@@ -88,7 +88,7 @@ const ExpensePieChart = (props: { dateRange?: DateRangeType }) => {
         <CardTitle className="text-lg">Expenses Breakdown</CardTitle>
         <CardDescription>Total expenses {dateRange?.label}</CardDescription>
       </CardHeader>
-      <CardContent className="h-[313px]">
+      <CardContent className="h-[250px] sm:h-[280px] md:h-[313px]">
         <div className="w-full">
           {categories.length === 0 ? (
             <EmptyState
@@ -196,9 +196,9 @@ const PieChartSkeleton = () => (
       <Skeleton className="mt-1 h-6 w-48" />
       <Skeleton className="mt-1 h-4 w-32" />
     </CardHeader>
-    <CardContent className="h-[313px]">
+    <CardContent className="h-[250px] sm:h-[280px] md:h-[313px]">
       <div className="flex w-full items-center justify-center">
-        <div className="relative h-[200px] w-[200px]">
+        <div className="relative h-40 w-40 sm:h-48 sm:w-48 md:h-[200px] md:w-[200px]">
           <Skeleton className="h-full w-full rounded-full" />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <Skeleton className="mb-2 h-8 w-24" />

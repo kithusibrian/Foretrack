@@ -35,6 +35,8 @@ export interface TransactionDocument extends Document {
   amount: number;
   category: string;
   receiptUrl?: string;
+  goalId?: mongoose.Types.ObjectId | null;
+  isContribution?: boolean;
   recurringInterval?: keyof typeof RecurringIntervalEnum;
   nextRecurringDate?: Date;
   lastProcessed?: Date;
@@ -79,6 +81,15 @@ const transactionSchema = new Schema<TransactionDocument>(
     },
     receiptUrl: {
       type: String,
+    },
+    goalId: {
+      type: Schema.Types.ObjectId,
+      ref: "Goal",
+      default: null,
+    },
+    isContribution: {
+      type: Boolean,
+      default: false,
     },
     date: {
       type: Date,

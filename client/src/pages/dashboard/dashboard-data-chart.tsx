@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { format } from "date-fns";
 import {
   Bar,
@@ -35,7 +35,7 @@ interface PropsType {
   dateRange?: DateRangeType;
 }
 
-const COLORS = ["#10906D", "#E25D48"];
+const COLORS = ["#059669", "#ef4444"]; // slightly richer green and red for contrast
 const TRANSACTION_TYPES = ["income", "expenses"];
 
 const chartConfig = {
@@ -101,7 +101,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                 <span className="w-full block text-xs text-muted-foreground">
                   No of {chartConfig[chart].label}
                 </span>
-                <span className="flex items-center justify-center gap-2 text-lg font-semibold leading-none sm:text-3xl">
+                <span className="flex items-center justify-center gap-2 text-base sm:text-lg md:text-2xl lg:text-3xl font-semibold leading-none">
                   {key === TRANSACTION_TYPES[0] ? (
                     <TrendingUpIcon className="size-3 ml-2 text-primary" />
                   ) : (
@@ -116,7 +116,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
           })}
         </div>
       </CardHeader>
-      <CardContent className="px-2 pt-2 sm:px-6 sm:pt-2 h-[300px]">
+      <CardContent className="px-2 pt-2 sm:px-6 sm:pt-2 h-[250px] sm:h-[280px] md:h-[313px]">
         {chartData?.length === 0 ? (
           <EmptyState
             title="No transaction data"
@@ -125,12 +125,12 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
         ) : (
           <ChartContainer
             config={chartConfig}
-            className="aspect-auto h-[300px] w-full"
+            className="aspect-auto h-[250px] sm:h-[280px] md:h-[313px] w-full"
           >
             <BarChart
               data={chartData || []}
-              barGap={8}
-              barCategoryGap={isMobile ? "18%" : "28%"}
+              barGap={4}
+              barCategoryGap={isMobile ? "4%" : "8%"}
             >
               <defs>
                 <linearGradient
@@ -161,8 +161,27 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                     stopOpacity={0.35}
                   />
                 </linearGradient>
+                <filter
+                  id="barShadow"
+                  x="-20%"
+                  y="-20%"
+                  width="140%"
+                  height="140%"
+                >
+                  <feDropShadow
+                    dx="0"
+                    dy="4"
+                    stdDeviation="6"
+                    floodColor="#0f172a"
+                    floodOpacity="0.08"
+                  />
+                </filter>
               </defs>
-              <CartesianGrid vertical={false} strokeDasharray="4 4" />
+              <CartesianGrid
+                vertical={false}
+                strokeDasharray="4 4"
+                stroke="rgba(15,23,42,0.06)"
+              />
               <XAxis
                 dataKey="date"
                 tickLine={false}
@@ -185,7 +204,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
               <ReferenceLine y={0} stroke="var(--border)" />
               <ChartTooltip
                 cursor={{
-                  fill: "rgba(15,23,42,0.05)",
+                  fill: "rgba(15,23,42,0.04)",
                   strokeWidth: 1,
                 }}
                 content={
@@ -216,14 +235,22 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                 name="income"
                 fill="url(#incomeBarGradient)"
                 radius={[8, 8, 0, 0]}
-                maxBarSize={isMobile ? 20 : 28}
+                maxBarSize={isMobile ? 48 : 80}
+                stroke={COLORS[0]}
+                strokeWidth={1.5}
+                strokeOpacity={0.95}
+                style={{ filter: "url(#barShadow)" }}
               />
               <Bar
                 dataKey="expenses"
                 name="expenses"
                 fill="url(#expenseBarGradient)"
                 radius={[8, 8, 0, 0]}
-                maxBarSize={isMobile ? 20 : 28}
+                maxBarSize={isMobile ? 48 : 80}
+                stroke={COLORS[1]}
+                strokeWidth={1.5}
+                strokeOpacity={0.95}
+                style={{ filter: "url(#barShadow)" }}
               />
               <ChartLegend
                 verticalAlign="bottom"
@@ -264,3 +291,4 @@ const ChartSkeleton = () => (
 );
 
 export default DashboardDataChart;
+

@@ -14,6 +14,7 @@ export const PROTECTED_ROUTES = {
   OVERVIEW: "/overview",
   TRANSACTIONS: "/transactions",
   BUDGETS: "/budgets",
+  GOALS: "/goals",
   REPORTS: "/reports",
   SETTINGS: "/settings",
   SETTINGS_APPEARANCE: "/settings/appearance",

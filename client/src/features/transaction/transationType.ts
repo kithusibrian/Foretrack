@@ -46,6 +46,8 @@ export interface TransactionType {
   paymentMethod: string;
   createdAt: string;
   updatedAt: string;
+  goalId?: string | null;
+  isContribution?: boolean;
   id?: string;
 }
 

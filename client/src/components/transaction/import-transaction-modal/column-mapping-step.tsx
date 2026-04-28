@@ -1,8 +1,18 @@
 import { useMemo, useState } from "react";
 
-import { BanIcon, ChevronLeft, ChevronRight, FileSpreadsheet, HelpCircle } from "lucide-react";
+import {
+  BanIcon,
+  ChevronLeft,
+  ChevronRight,
+  FileSpreadsheet,
+  HelpCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -12,51 +22,56 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CsvColumn, TransactionField } from "@/@types/transaction.type";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type ColumnMappingStepProps = {
-    csvColumns: CsvColumn[];
-    transactionFields: TransactionField[];
-    mappings: Record<string, string>;
-    onComplete: (mappings: Record<string, string>) => void;
-    onBack: () => void;
-  };
-  
+  csvColumns: CsvColumn[];
+  transactionFields: TransactionField[];
+  mappings: Record<string, string>;
+  onComplete: (mappings: Record<string, string>) => void;
+  onBack: () => void;
+};
 
 type AvailableAttributeType =
   | { fieldName: string; required?: never } // For the "Do not import" option
   | TransactionField; // For the actual fields
 
+const ColumnMappingStep = ({
+  csvColumns,
+  transactionFields,
+  onComplete,
+  onBack,
+  ...props
+}: ColumnMappingStepProps) => {
+  const [mappings, setMappings] = useState<Record<string, string>>(
+    props.mappings || {},
+  );
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-const ColumnMappingStep =({
-    csvColumns,
-    transactionFields,
-    onComplete,
-    onBack,
-    ...props
-  }: ColumnMappingStepProps) => {
-    const [mappings, setMappings] = useState<Record<string, string>>(props.mappings || {});
-    const [errors, setErrors] = useState<Record<string, string>>({});
-  
-  const availableAttributes: AvailableAttributeType[] = useMemo(() => [
-    { fieldName: "Skip" },
-    ...transactionFields,
-  ], [transactionFields]);
-  
-    const handleMappingChange = (csvColumn: string, field: string) => {
-      setMappings((prev) => ({
-        ...prev,
-        [csvColumn]: field,
-      }));
-  
-      if (errors[csvColumn]) {
-        //delete the csvColumn from errors
-        delete errors[csvColumn];
-        setErrors((prev) => ({ ...prev }));
-  
-      }
-    };
-    
+  const availableAttributes: AvailableAttributeType[] = useMemo(
+    () => [{ fieldName: "Skip" }, ...transactionFields],
+    [transactionFields],
+  );
+
+  const handleMappingChange = (csvColumn: string, field: string) => {
+    setMappings((prev) => ({
+      ...prev,
+      [csvColumn]: field,
+    }));
+
+    if (errors[csvColumn]) {
+      //delete the csvColumn from errors
+      delete errors[csvColumn];
+      setErrors((prev) => ({ ...prev }));
+    }
+  };
+
   const validateMappings = () => {
     const newErrors: Record<string, string> = {};
     const usedFields = new Set<string>();
@@ -71,35 +86,34 @@ const ColumnMappingStep =({
     if (Object.keys(newErrors).length === 0) {
       const finalMappings = Object.fromEntries(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        Object.entries(mappings).filter(([_, field]) => field !== "Skip")
+        Object.entries(mappings).filter(([_, field]) => field !== "Skip"),
       );
       onComplete(finalMappings);
     }
   };
 
   const hasRequiredMappings = transactionFields.every(
-    (field) => !field.required || Object.values(mappings).includes(field.fieldName)
+    (field) =>
+      !field.required || Object.values(mappings).includes(field.fieldName),
   );
 
-    // Calculate the count of non-"none" mappings
+  // Calculate the count of non-"none" mappings
   const validMappingsCount = Object.values(mappings).filter(
-      field => field !== "Skip"
+    (field) => field !== "Skip",
   ).length;
 
   const hasErrors = Object.keys(errors).length > 0;
 
   return (
     <div className="space-y-6">
-    <DialogHeader>
-      <DialogTitle>Map CSV Columns</DialogTitle>
-      <DialogDescription>
-        Match the columns from your file to the transaction fields
-      </DialogDescription>
-    </DialogHeader>
+      <DialogHeader>
+        <DialogTitle>Map CSV Columns</DialogTitle>
+        <DialogDescription>
+          Match the columns from your file to the transaction fields
+        </DialogDescription>
+      </DialogHeader>
 
-    <div className="border rounded-md overflow-y-auto"
-    
-      >
+      <div className="border rounded-md overflow-x-auto overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -108,7 +122,7 @@ const ColumnMappingStep =({
             </TableRow>
           </TableHeader>
           <TableBody>
-          {csvColumns.map((column) => (
+            {csvColumns.map((column) => (
               <TableRow
                 key={column.id}
                 className={column.hasError ? "!bg-red-50" : ""}
@@ -119,20 +133,21 @@ const ColumnMappingStep =({
                     <span>{column.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="pl-8">
+                <TableCell className="pl-4 sm:pl-8">
                   <div className="flex w-full items-center gap-0">
-                    <HelpCircle className="h-5 w-5 mr-2 text-slate-400" />
-                   <div className="w-[200px]">
-                    <Select
+                    <HelpCircle className="mr-2 h-5 w-5 text-slate-400" />
+                    <div className="w-full min-w-[160px] sm:w-[200px]">
+                      <Select
                         value={mappings[column.name] || ""}
                         onValueChange={(value) =>
                           handleMappingChange(column.name, value)
                         }
                       >
-                        <SelectTrigger className="border-none shadow-none focus:ring-0 pl-0"
-                         style={{
-                          width: "100%",
-                         }}
+                        <SelectTrigger
+                          className="border-none shadow-none focus:ring-0 pl-0"
+                          style={{
+                            width: "100%",
+                          }}
                         >
                           <SelectValue
                             className="!text-muted-foreground w-full capitalize"
@@ -141,55 +156,61 @@ const ColumnMappingStep =({
                         </SelectTrigger>
                         <SelectContent>
                           {availableAttributes.map((attr) => {
-                            const isDisabled = attr.fieldName !== "Skip" && 
-                            attr.fieldName !== mappings[column.name] && 
-                            Object.values(mappings).includes(attr.fieldName);
-                          
+                            const isDisabled =
+                              attr.fieldName !== "Skip" &&
+                              attr.fieldName !== mappings[column.name] &&
+                              Object.values(mappings).includes(attr.fieldName);
+
                             return (
-                              <SelectItem key={attr.fieldName} value={attr.fieldName}
-                              className="w-full flex items-center justify-between gap-2"
-                              disabled={isDisabled}
+                              <SelectItem
+                                key={attr.fieldName}
+                                value={attr.fieldName}
+                                className="w-full flex items-center justify-between gap-2"
+                                disabled={isDisabled}
                               >
-                              <span className="flex-1 capitalize">
-                                {attr.fieldName}
-                                {attr?.required && (
-                                  <span className="text-red-500"> *</span>
+                                <span className="flex-1 capitalize">
+                                  {attr.fieldName}
+                                  {attr?.required && (
+                                    <span className="text-red-500"> *</span>
+                                  )}
+                                </span>
+                                {isDisabled && (
+                                  <BanIcon className="currentColor size-4" />
                                 )}
-                              </span>
-                                {isDisabled && <BanIcon className="currentColor size-4" />}
                               </SelectItem>
-                            )
+                            );
                           })}
                         </SelectContent>
                       </Select>
                       {errors[column.name] && (
-                          <p className="text-[10px] text-red-500">{errors[column.name]}</p>
-                        )}
-                   </div>
+                        <p className="text-[10px] text-red-500">
+                          {errors[column.name]}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        </div>
+      </div>
 
-
-    <div className="flex justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
         <Button variant="outline" onClick={onBack}>
           <ChevronLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
         <Button
-           onClick={validateMappings}
-           disabled={!hasRequiredMappings || hasErrors}
+          onClick={validateMappings}
+          disabled={!hasRequiredMappings || hasErrors}
         >
           Continue ({validMappingsCount}/{transactionFields.length})
           <ChevronRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ColumnMappingStep
+export default ColumnMappingStep;

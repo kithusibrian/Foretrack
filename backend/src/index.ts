@@ -19,6 +19,7 @@ import reportRoutes from "./routes/report.route";
 import { getDateRange } from "./utils/date";
 import analyticsRoutes from "./routes/analytics.route";
 import budgetRoutes from "./routes/budget.route";
+import goalRoutes from "./routes/goal.route";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -55,6 +56,7 @@ app.use(`${BASE_PATH}/report`, passportAuthenticateJwt, reportRoutes);
 app.use(`${BASE_PATH}/analytics`, passportAuthenticateJwt, analyticsRoutes);
 
 app.use(`${BASE_PATH}/budget`, passportAuthenticateJwt, budgetRoutes);
+app.use(`${BASE_PATH}/goal`, passportAuthenticateJwt, goalRoutes);
 
 app.use(errorHandler);
 

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+﻿import { cn } from "@/lib/utils";
 import PageHeader from "./page-header";
 
 interface PropsType {
@@ -30,7 +30,7 @@ const PageLayout = ({ children, className,
           renderPageHeader={renderPageHeader}
         />
       )}
-    <div className={cn("w-full max-w-[var(--max-width)] mx-auto pt-8",
+    <div className={cn("w-full max-w-[var(--max-width)] mx-auto px-3 sm:px-4 md:px-6 pt-4 sm:pt-6 md:pt-8",
       addMarginTop && "-mt-20",
       className)}>
       {children}
@@ -40,3 +40,4 @@ const PageLayout = ({ children, className,
 };
 
 export default PageLayout;
+

@@ -159,16 +159,19 @@ export const DateRangeSelect = ({
         <Button
           variant="outline"
           className={cn(
-            `w-[200px] flex items-center justify-between text-left font-normal !bg-[var(--secondary-dark-color)]
-            border-gray-700 !text-white !cursor-pointer`,
+            `flex w-full items-center justify-between gap-2 text-left font-normal !bg-[var(--secondary-dark-color)]
+            border-gray-700 !text-white !cursor-pointer sm:w-auto sm:min-w-40 md:min-w-48`,
             !dateRange && "text-muted-foreground",
           )}
         >
-          {displayText}
+          <span className="truncate">{displayText}</span>
           <ChevronDownIcon className="ml-2 h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent
+        className="w-[calc(100vw-1rem)] p-0 sm:w-auto"
+        align="start"
+      >
         <div className="grid py-1">
           {presets.map((preset) => (
             <Button

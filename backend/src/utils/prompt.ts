@@ -135,3 +135,120 @@ ${categoryList}
   
   `.trim();
 };
+
+export const coachPrompt = ({
+  question,
+  stats,
+}: {
+  question: string;
+  stats: any;
+}) => {
+  const summary = `Summary for the period:\n- Total Income: KES ${Number(
+    stats.totalIncome || 0,
+  ).toFixed(2)}\n- Total Expenses: KES ${Number(
+    stats.totalExpenses || 0,
+  ).toFixed(
+    2,
+  )}\n- Available Balance: KES ${Number(stats.availableBalance || 0).toFixed(2)}\n- Savings Rate: ${Number(
+    stats.savingsRate || 0,
+  ).toFixed(
+    2,
+  )}%\n- Total Transactions: ${stats.transactionCount || 0}\n\nTop categories:\n${Object.entries(
+    stats.categories || {},
+  )
+    .map(
+      ([k, v]: any) =>
+        `- ${k}: KES ${Number(v.amount || 0).toFixed(2)} (${v.percentage}%)`,
+    )
+    .join("\n")}`;
+
+  // Build weekly summary for quick reference
+  const weeklySummary = stats.transactionsByWeek
+    ? Object.entries(stats.transactionsByWeek)
+        .slice(0, 8) // Last 8 weeks max
+        .map(([weekKey, txs]: [string, any]) => {
+          const weekExpenses = (txs || [])
+            .filter((t: any) => t.type === "EXPENSE")
+            .reduce((sum: number, t: any) => sum + (t.amount || 0), 0);
+          const weekIncome = (txs || [])
+            .filter((t: any) => t.type === "INCOME")
+            .reduce((sum: number, t: any) => sum + (t.amount || 0), 0);
+          return `Week of ${weekKey}: ${txs.length} transactions, KES ${weekExpenses.toFixed(2)} expenses, KES ${weekIncome.toFixed(2)} income`;
+        })
+        .join("\n")
+    : "";
+
+  // Build daily summary for today/yesterday if available
+  const dailySummary = stats.transactionsByDay
+    ? Object.entries(stats.transactionsByDay)
+        .slice(0, 7) // Last 7 days
+        .map(([dayKey, txs]: [string, any]) => {
+          const dayExpenses = (txs || [])
+            .filter((t: any) => t.type === "EXPENSE")
+            .reduce((sum: number, t: any) => sum + (t.amount || 0), 0);
+          return `${dayKey}: KES ${dayExpenses.toFixed(2)} in ${txs.length} transaction(s)`;
+        })
+        .join("\n")
+    : "";
+
+  const budgetSummary = stats.budgetSummary || {};
+  const budgetPeriod = stats.budgetPeriod || {};
+  const budgets = Array.isArray(stats.budgets) ? stats.budgets : [];
+
+  const budgetSection = `Budget context (monthly):\n- Month: ${budgetPeriod.month || "n/a"}\n- Year: ${budgetPeriod.year || "n/a"}\n- Total Budget Limit: KES ${Number(budgetSummary.totalLimit || 0).toFixed(2)}\n- Total Budget Spent: KES ${Number(budgetSummary.totalSpent || 0).toFixed(2)}\n- Total Budget Remaining: KES ${Number(budgetSummary.totalRemaining || 0).toFixed(2)}\n- Budget Usage: ${Number(budgetSummary.usagePercentage || 0).toFixed(2)}%\n- Over-limit Categories: ${Number(budgetSummary.overLimitCount || 0)}\n- Near-limit Categories: ${Number(budgetSummary.nearLimitCount || 0)}\n\nCategory budgets:\n${
+    budgets
+      .map(
+        (item: any) =>
+          `- ${item.category}: limit KES ${Number(item.limitAmount || 0).toFixed(2)}, spent KES ${Number(item.spentAmount || 0).toFixed(2)}, remaining KES ${Number(item.remainingAmount || 0).toFixed(2)}, usage ${Number(item.usedPercentage || 0).toFixed(2)}%, status ${item.alertStatus || "ON_TRACK"}`,
+      )
+      .join("\\n") || "- No budgets configured for this month."
+  }`;
+
+  const recentTransactions = Array.isArray(stats.recentTransactions)
+    ? stats.recentTransactions
+    : [];
+
+  const transactionSection = `Recent transactions (latest ${recentTransactions.length}):\n${
+    recentTransactions
+      .map(
+        (item: any) =>
+          `- ${item.date ? new Date(item.date).toISOString().slice(0, 10) : "n/a"} | ${item.type || "n/a"} | ${item.category || "n/a"} | KES ${Number(item.amount || 0).toFixed(2)} | ${item.title || "Untitled"}${item.description ? ` | ${item.description}` : ""}`,
+      )
+      .join("\\n") || "- No transactions found for this period."
+  }`;
+
+  return `You are a helpful, plain-language financial coach named Foretrack Coach.
+Answer the user's question directly and concisely. Use at most 3 short paragraphs.
+Do not include marketing or product explanations. Use the data summary below to ground your answer. 
+
+IMPORTANT CAPABILITIES:
+- For time-period questions (this week, last week, this month, etc.), use the weekly and daily summaries to answer accurately. Extract and summarize expense/income for that specific period.
+- For "Can I afford this?" questions: provide a simple yes/no and one sentence justification using available balance and recent spending patterns.
+- For budget questions: use the budget context, mention specific categories, limits, and remaining amounts.
+- For transaction questions (recent purchases, spending by category, anomalies): use the recent transactions and full transaction list to provide specific examples.
+- When user asks to "summarize expenses for [time period]", break down by category and provide top 3-5 spending areas in that period.
+
+User question: "${question}"
+
+Data Context:
+${summary}
+
+Weekly Transaction Summary:
+${weeklySummary || "- No weekly data available"}
+
+Daily Transaction Summary (Last 7 days):
+${dailySummary || "- No daily data available"}
+
+${budgetSection}
+
+${transactionSection}
+
+Instructions for analysis:
+- Use specific numbers and categories from the data.
+- For time-period summaries, group transactions by week or day as needed.
+- If asked about a specific period (e.g., "this week"), calculate totals for that exact period.
+- Be concise but informative. Always include concrete figures.
+
+Keep the answer friendly, practical, and short. If suggesting actions, give one clear next step.
+Respond in plain text only; do not include JSON, code fences, or extra commentary.`;
+};
