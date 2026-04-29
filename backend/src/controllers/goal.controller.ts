@@ -5,6 +5,7 @@ import {
   contributeSchema,
   createGoalSchema,
   goalIdSchema,
+  removeContributionSchema,
   updateGoalSchema,
 } from "../validators/goal.validator";
 import {
@@ -13,6 +14,7 @@ import {
   deleteGoalService,
   getAllGoalsService,
   getGoalByIdService,
+  removeContributionService,
   updateGoalService,
 } from "../services/goal.service";
 
@@ -95,6 +97,21 @@ export const addContributionController = asyncHandler(
 
     return res.status(HTTPSTATUS.OK).json({
       message: "Contribution added successfully",
+      data: goal,
+    });
+  },
+);
+
+export const removeContributionController = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const goalId = goalIdSchema.parse(req.params.id);
+    const body = removeContributionSchema.parse(req.body);
+
+    const goal = await removeContributionService(userId, goalId, body);
+
+    return res.status(HTTPSTATUS.OK).json({
+      message: "Contribution removed successfully",
       data: goal,
     });
   },

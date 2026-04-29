@@ -390,7 +390,7 @@ export const getAllTransactionService = async (
     TransactionModel.find(filterConditions)
       .skip(skip)
       .limit(pageSize)
-      .sort({ createdAt: -1 }),
+      .sort({ date: -1, createdAt: -1 }),
     TransactionModel.countDocuments(filterConditions),
   ]);
 
@@ -437,6 +437,7 @@ export const duplicateTransactionService = async (
   const duplicated = await TransactionModel.create({
     ...transaction.toObject(),
     _id: undefined,
+    date: new Date(),
     title: `Duplicate - ${transaction.title}`,
     description: transaction.description
       ? `${transaction.description} (Duplicate)`

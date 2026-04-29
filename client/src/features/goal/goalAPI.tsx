@@ -58,6 +58,17 @@ export const goalApi = apiClient.injectEndpoints({
       }),
       invalidatesTags: ["goals", "transactions"],
     }),
+    removeContributionFromGoal: builder.mutation<
+      any,
+      { id: string; transactionId: string }
+    >({
+      query: ({ id, transactionId }) => ({
+        url: `/goal/${id}/remove-contribution`,
+        method: "POST",
+        body: { transactionId },
+      }),
+      invalidatesTags: ["goals", "transactions"],
+    }),
   }),
 });
 
@@ -68,4 +79,5 @@ export const {
   useUpdateGoalMutation,
   useDeleteGoalMutation,
   useContributeToGoalMutation,
+  useRemoveContributionFromGoalMutation,
 } = goalApi;

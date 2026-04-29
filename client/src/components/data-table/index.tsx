@@ -50,6 +50,7 @@ interface DataTableProps<TData> {
   onSearch?: (term: string) => void;
   onFilterChange?: (filters: Record<string, string>) => void;
   onBulkDelete?: (selectedIds: string[]) => void;
+  onRowClick?: (row: TData) => void;
   selection?: boolean;
   isLoading?: boolean;
   isBulkDeleting?: boolean;
@@ -74,6 +75,7 @@ export function DataTable<TData>({
   onSearch,
   onFilterChange,
   onBulkDelete,
+  onRowClick,
   selection = true,
   isLoading = false,
   isBulkDeleting = false,
@@ -139,6 +141,24 @@ export function DataTable<TData>({
     const selectedIds = selectedRows.map((row) => (row.original as any).id);
     onBulkDelete?.(selectedIds);
     setRowSelection({});
+  };
+
+  const handleRowClick = (
+    event: React.MouseEvent<HTMLTableRowElement>,
+    row: TData,
+  ) => {
+    if (!onRowClick) return;
+
+    const target = event.target as HTMLElement | null;
+    if (
+      target?.closest(
+        'button, a, input, textarea, select, [role="menuitem"], [data-no-row-click="true"]',
+      )
+    ) {
+      return;
+    }
+
+    onRowClick(row);
   };
 
   return (
@@ -240,6 +260,8 @@ export function DataTable<TData>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
+                    className={onRowClick ? "cursor-pointer" : undefined}
+                    onClick={(event) => handleRowClick(event, row.original)}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="!text-[13.3px]">

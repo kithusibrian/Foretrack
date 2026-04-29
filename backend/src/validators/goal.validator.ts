@@ -23,6 +23,11 @@ export const contributeSchema = z.object({
   transactionId: z.string().trim().optional(),
 });
 
+export const removeContributionSchema = z.object({
+  transactionId: z.string().trim().min(1, "Transaction id is required"),
+});
+
 export type CreateGoalType = z.infer<typeof createGoalSchema>;
 export type UpdateGoalType = z.infer<typeof updateGoalSchema>;
 export type ContributeType = z.infer<typeof contributeSchema>;
+export type RemoveContributionType = z.infer<typeof removeContributionSchema>;

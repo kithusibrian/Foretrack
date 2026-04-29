@@ -5,6 +5,7 @@ import { BadRequestException, NotFoundException } from "../utils/app-error";
 import {
   ContributeType,
   CreateGoalType,
+  RemoveContributionType,
   UpdateGoalType,
 } from "../validators/goal.validator";
 
@@ -75,6 +76,8 @@ export const addContributionService = async (
   if (goal.status === GoalStatusEnum.COMPLETED)
     throw new BadRequestException("Goal already completed");
 
+  let contributionAmount = Number(body.amount);
+
   // If transactionId provided, prevent re-linking and ensure ownership.
   if (body.transactionId) {
     const txn = await TransactionModel.findOne({
@@ -93,14 +96,59 @@ export const addContributionService = async (
     txn.goalId = goal._id;
     txn.isContribution = true;
     await txn.save();
+
+    // Keep goal math consistent with linked transaction value.
+    contributionAmount = Math.abs(Number(txn.amount || 0));
   }
 
   // amount is expected in decimal (KES). model setters convert to cents
-  goal.currentAmount =
-    (goal.currentAmount ?? 0) + (body.amount as unknown as number);
+  goal.currentAmount = (goal.currentAmount ?? 0) + contributionAmount;
 
   if (goal.targetAmount > 0 && goal.currentAmount >= goal.targetAmount) {
     goal.status = GoalStatusEnum.COMPLETED;
+  }
+
+  await goal.save();
+
+  return goal;
+};
+
+export const removeContributionService = async (
+  userId: string,
+  goalId: string,
+  body: RemoveContributionType,
+) => {
+  const goal = await GoalModel.findOne({ _id: goalId, userId });
+  if (!goal) throw new NotFoundException("Goal not found");
+
+  const txn = await TransactionModel.findOne({
+    _id: body.transactionId,
+    userId,
+  });
+  if (!txn) throw new NotFoundException("Transaction not found");
+
+  if (!txn.isContribution || !txn.goalId) {
+    throw new BadRequestException(
+      "This transaction is not linked to any goal contribution",
+    );
+  }
+
+  if (String(txn.goalId) !== String(goal._id)) {
+    throw new BadRequestException(
+      "This transaction is linked to a different goal",
+    );
+  }
+
+  const contributionAmount = Math.abs(Number(txn.amount || 0));
+
+  txn.goalId = null;
+  txn.isContribution = false;
+  await txn.save();
+
+  goal.currentAmount = Math.max(0, (goal.currentAmount ?? 0) - contributionAmount);
+
+  if (goal.targetAmount > 0 && goal.currentAmount < goal.targetAmount) {
+    goal.status = GoalStatusEnum.ACTIVE;
   }
 
   await goal.save();

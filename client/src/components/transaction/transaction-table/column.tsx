@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ArrowUpDown,
   CircleDot,
@@ -53,6 +53,7 @@ import {
 import {
   useContributeToGoalMutation,
   useGetAllGoalsQuery,
+  useRemoveContributionFromGoalMutation,
 } from "@/features/goal/goalAPI";
 
 type FrequencyInfo = {
@@ -91,13 +92,16 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     header: ({ column }) => (
       <Button
         variant="ghost"
+        className="w-full justify-start !px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Date Created
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => format(row.getValue("createdAt"), "MMM dd, yyyy"),
+    cell: ({ row }) => (
+      <div className="text-left">{format(row.getValue("createdAt"), "MMM dd, yyyy")}</div>
+    ),
   },
   {
     accessorKey: "title",
@@ -108,7 +112,7 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     header: ({ column }) => (
       <Button
         variant="ghost"
-        className="!pl-0"
+        className="w-full justify-start !px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Category
@@ -125,6 +129,7 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     header: ({ column }) => (
       <Button
         variant="ghost"
+        className="w-full justify-start !px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Type
@@ -174,13 +179,16 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     header: ({ column }) => (
       <Button
         variant="ghost"
+        className="w-full justify-start !px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Transaction Date
         <ArrowUpDown className="ml-2 h-4 w-4" />
       </Button>
     ),
-    cell: ({ row }) => format(row.original.date, "MMM dd, yyyy"),
+    cell: ({ row }) => (
+      <div className="text-left">{format(row.original.date, "MMM dd, yyyy")}</div>
+    ),
   },
   {
     accessorKey: "paymentMethod",
@@ -200,6 +208,7 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
     header: ({ column }) => (
       <Button
         variant="ghost"
+        className="w-full justify-start !px-0"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
         Frequently
@@ -273,6 +282,8 @@ const ActionsCell = ({ row }: { row: any }) => {
   const { data: goalsData } = useGetAllGoalsQuery();
   const [contributeToGoal, { isLoading: isAssigning }] =
     useContributeToGoalMutation();
+  const [removeContributionFromGoal, { isLoading: isRemovingContribution }] =
+    useRemoveContributionFromGoalMutation();
 
   const goals = goalsData?.data || [];
   const alreadyLinked = !!transaction.isContribution;
@@ -282,10 +293,15 @@ const ActionsCell = ({ row }: { row: any }) => {
 
   const [deleteTransaction, { isLoading: isDeleting }] =
     useDeleteTransactionMutation();
+  const duplicateInFlightRef = useRef(false);
+  const deleteInFlightRef = useRef(false);
+  const removeContributionInFlightRef = useRef(false);
 
   const handleDuplicate = (e: Event) => {
     e.preventDefault();
-    if (isDuplicating) return;
+    e.stopPropagation?.();
+    if (isDuplicating || duplicateInFlightRef.current) return;
+    duplicateInFlightRef.current = true;
     duplicateTransaction(transactionId)
       .unwrap()
       .then(() => {
@@ -293,12 +309,17 @@ const ActionsCell = ({ row }: { row: any }) => {
       })
       .catch((error) => {
         toast.error(error.data?.message || "Failed to duplicate transaction");
+      })
+      .finally(() => {
+        duplicateInFlightRef.current = false;
       });
   };
 
   const handleDelete = (e: Event) => {
     e.preventDefault();
-    if (isDeleting) return;
+    e.stopPropagation?.();
+    if (isDeleting || deleteInFlightRef.current) return;
+    deleteInFlightRef.current = true;
     deleteTransaction(transactionId)
       .unwrap()
       .then(() => {
@@ -306,6 +327,9 @@ const ActionsCell = ({ row }: { row: any }) => {
       })
       .catch((error) => {
         toast.error(error.data?.message || "Failed to delete transaction");
+      })
+      .finally(() => {
+        deleteInFlightRef.current = false;
       });
   };
 
@@ -336,31 +360,78 @@ const ActionsCell = ({ row }: { row: any }) => {
       });
   };
 
+  const handleRemoveFromGoal = (e: Event) => {
+    e.preventDefault();
+    e.stopPropagation?.();
+
+    if (!transaction.goalId) {
+      toast.error("This transaction is not linked to a goal");
+      return;
+    }
+
+    if (isRemovingContribution || removeContributionInFlightRef.current) return;
+
+    removeContributionInFlightRef.current = true;
+
+    removeContributionFromGoal({
+      id: transaction.goalId,
+      transactionId,
+    })
+      .unwrap()
+      .then(() => {
+        toast.success("Transaction removed from goal contribution");
+      })
+      .catch((error) => {
+        toast.error(error.data?.message || "Failed to remove contribution");
+      })
+      .finally(() => {
+        removeContributionInFlightRef.current = false;
+      });
+  };
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
+          <Button
+            variant="ghost"
+            className="h-8 w-8 p-0"
+            onClick={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
+          >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="w-52"
           align="end"
+          onClick={(event) => event.stopPropagation()}
+          onPointerDown={(event) => event.stopPropagation()}
           onCloseAutoFocus={(e) => {
-            if (isDeleting || isDuplicating || isAssigning) {
+            if (
+              isDeleting ||
+              isDuplicating ||
+              isAssigning ||
+              isRemovingContribution
+            ) {
               e.preventDefault();
             }
           }}
         >
-          <DropdownMenuItem onClick={() => onOpenDrawer(transactionId)}>
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onOpenDrawer(transactionId);
+            }}
+          >
             <Pencil className="mr-1 h-4 w-4" />
             Edit
           </DropdownMenuItem>
           <DropdownMenuItem
             className="relative"
             disabled={isDuplicating}
-            onSelect={handleDuplicate}
+            onSelect={(event) => handleDuplicate(event)}
           >
             <Copy className="mr-1 h-4 w-4" />
             Duplicate
@@ -369,26 +440,39 @@ const ActionsCell = ({ row }: { row: any }) => {
             )}
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            disabled={alreadyLinked}
-            onSelect={(e) => {
-              e.preventDefault();
-              if (alreadyLinked) return;
-              setAssignAmount(
-                String(Math.abs(Number(transaction.amount || 0))),
-              );
-              setAssignDialogOpen(true);
-            }}
-          >
-            <HandCoins className="mr-1 h-4 w-4" />
-            {alreadyLinked ? "Already Goal Contribution" : "Assign To Goal"}
-          </DropdownMenuItem>
+          {alreadyLinked ? (
+            <DropdownMenuItem
+              className="relative"
+              disabled={isRemovingContribution}
+              onSelect={(event) => handleRemoveFromGoal(event)}
+            >
+              <HandCoins className="mr-1 h-4 w-4" />
+              Remove From Goal
+              {isRemovingContribution && (
+                <Loader className="ml-1 h-4 w-4 absolute right-2 animate-spin" />
+              )}
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem
+              onSelect={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setAssignAmount(
+                  String(Math.abs(Number(transaction.amount || 0))),
+                );
+                setAssignDialogOpen(true);
+              }}
+            >
+              <HandCoins className="mr-1 h-4 w-4" />
+              Assign To Goal
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="relative !text-destructive"
             disabled={isDeleting}
-            onSelect={handleDelete}
+            onSelect={(event) => handleDelete(event)}
           >
             <Trash2 className="mr-1 h-4 w-4 !text-destructive" />
             Delete

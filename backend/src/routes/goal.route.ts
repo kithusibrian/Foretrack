@@ -5,6 +5,7 @@ import {
   deleteGoalController,
   getAllGoalsController,
   getGoalByIdController,
+  removeContributionController,
   updateGoalController,
 } from "../controllers/goal.controller";
 
@@ -16,5 +17,6 @@ goalRoutes.get("/:id", getGoalByIdController);
 goalRoutes.put("/update/:id", updateGoalController);
 goalRoutes.delete("/delete/:id", deleteGoalController);
 goalRoutes.post("/:id/contribute", addContributionController);
+goalRoutes.post("/:id/remove-contribution", removeContributionController);
 
 export default goalRoutes;

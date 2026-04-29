@@ -8,6 +8,8 @@ import {
   useGetAllTransactionsQuery,
 } from "@/features/transaction/transactionAPI";
 import { toast } from "sonner";
+import TransactionDetailModal from "../transaction-detail-modal";
+import { TransactionType } from "@/features/transaction/transationType";
 
 type FilterType = {
   type?: _TransactionType | undefined;
@@ -33,6 +35,8 @@ const TransactionTable = (props: {
 
   const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
     useBulkDeleteTransactionMutation();
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionType | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const { data, isFetching } = useGetAllTransactionsQuery({
     keyword: debouncedTerm,
@@ -83,39 +87,55 @@ const TransactionTable = (props: {
       });
   };
 
+  const handleRowClick = (transaction: TransactionType) => {
+    setSelectedTransaction(transaction);
+    setIsDetailModalOpen(true);
+  };
+
   return (
-    <DataTable
-      data={transactions} //transactions
-      columns={transactionColumns}
-      searchPlaceholder="Search transactions..."
-      isLoading={isFetching}
-      isBulkDeleting={isBulkDeleting}
-      isShowPagination={props.isShowPagination}
-      pagination={pagination}
-      filters={[
-        {
-          key: "type",
-          label: "All Types",
-          options: [
-            { value: _TRANSACTION_TYPE.INCOME, label: "Income" },
-            { value: _TRANSACTION_TYPE.EXPENSE, label: "Expense" },
-          ],
-        },
-        {
-          key: "frequently",
-          label: "Frequently",
-          options: [
-            { value: "RECURRING", label: "Recurring" },
-            { value: "NON_RECURRING", label: "Non-Recurring" },
-          ],
-        },
-      ]}
-      onSearch={handleSearch}
-      onPageChange={(pageNumber) => handlePageChange(pageNumber)}
-      onPageSizeChange={(pageSize) => handlePageSizeChange(pageSize)}
-      onFilterChange={(filters) => handleFilterChange(filters)}
-      onBulkDelete={handleBulkDelete}
-    />
+    <>
+      <DataTable
+        data={transactions}
+        columns={transactionColumns}
+        searchPlaceholder="Search transactions..."
+        isLoading={isFetching}
+        isBulkDeleting={isBulkDeleting}
+        isShowPagination={props.isShowPagination}
+        pagination={pagination}
+        filters={[
+          {
+            key: "type",
+            label: "All Types",
+            options: [
+              { value: _TRANSACTION_TYPE.INCOME, label: "Income" },
+              { value: _TRANSACTION_TYPE.EXPENSE, label: "Expense" },
+            ],
+          },
+          {
+            key: "frequently",
+            label: "Frequently",
+            options: [
+              { value: "RECURRING", label: "Recurring" },
+              { value: "NON_RECURRING", label: "Non-Recurring" },
+            ],
+          },
+        ]}
+        onSearch={handleSearch}
+        onPageChange={(pageNumber) => handlePageChange(pageNumber)}
+        onPageSizeChange={(pageSize) => handlePageSizeChange(pageSize)}
+        onFilterChange={(filters) => handleFilterChange(filters)}
+        onBulkDelete={handleBulkDelete}
+        onRowClick={handleRowClick}
+      />
+      <TransactionDetailModal
+        transaction={selectedTransaction}
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedTransaction(null);
+        }}
+      />
+    </>
   );
 };
 export default TransactionTable;
