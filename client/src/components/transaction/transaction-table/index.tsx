@@ -35,7 +35,8 @@ const TransactionTable = (props: {
 
   const [bulkDeleteTransaction, { isLoading: isBulkDeleting }] =
     useBulkDeleteTransactionMutation();
-  const [selectedTransaction, setSelectedTransaction] = useState<TransactionType | null>(null);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<TransactionType | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const { data, isFetching } = useGetAllTransactionsQuery({

@@ -1,5 +1,11 @@
 import { format } from "date-fns";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { TransactionType } from "@/features/transaction/transationType";
 import { formatCurrency } from "@/lib/format-currency";
 
@@ -38,7 +44,10 @@ const TransactionDetailModal = ({
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Detail label="Title" value={transaction.title} />
-          <Detail label="Transaction Date" value={format(new Date(transaction.date), "MMM dd, yyyy")} />
+          <Detail
+            label="Transaction Date"
+            value={format(new Date(transaction.date), "MMM dd, yyyy")}
+          />
           <Detail
             label="Amount"
             value={`${isIncome ? "+" : "-"}${formatCurrency(amount, { currency: "KES" })}`}
@@ -46,32 +55,48 @@ const TransactionDetailModal = ({
           />
           <Detail label="Type" value={transaction.type} />
           <Detail label="Category" value={transaction.category} />
-          <Detail label="Payment Method" value={formatLabel(transaction.paymentMethod)} />
+          <Detail
+            label="Payment Method"
+            value={formatLabel(transaction.paymentMethod)}
+          />
           <Detail label="Status" value={transaction.status} />
           <Detail
             label="Recurring"
-            value={transaction.isRecurring ? formatLabel(transaction.recurringInterval || "") : "One-time"}
+            value={
+              transaction.isRecurring
+                ? formatLabel(transaction.recurringInterval || "")
+                : "One-time"
+            }
           />
           <Detail
             label="Created At"
-            value={format(new Date(transaction.createdAt), "MMM dd, yyyy HH:mm")}
+            value={format(
+              new Date(transaction.createdAt),
+              "MMM dd, yyyy HH:mm",
+            )}
           />
           <Detail
             label="Updated At"
-            value={format(new Date(transaction.updatedAt), "MMM dd, yyyy HH:mm")}
+            value={format(
+              new Date(transaction.updatedAt),
+              "MMM dd, yyyy HH:mm",
+            )}
           />
           {transaction.nextRecurringDate && (
             <Detail
               label="Next Recurring Date"
-              value={format(new Date(transaction.nextRecurringDate), "MMM dd, yyyy")}
+              value={format(
+                new Date(transaction.nextRecurringDate),
+                "MMM dd, yyyy",
+              )}
             />
           )}
-          {transaction.goalId && (
-            <Detail label="Goal Linked" value="Yes" />
-          )}
+          {transaction.goalId && <Detail label="Goal Linked" value="Yes" />}
           {transaction.description && (
             <div className="sm:col-span-2 rounded-md border p-3">
-              <p className="text-sm font-medium text-muted-foreground">Description</p>
+              <p className="text-sm font-medium text-muted-foreground">
+                Description
+              </p>
               <p className="mt-1 text-sm">{transaction.description}</p>
             </div>
           )}
@@ -94,7 +119,9 @@ const Detail = ({
     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
       {label}
     </p>
-    <p className={`mt-1 text-sm font-medium ${valueClassName || ""}`}>{value}</p>
+    <p className={`mt-1 text-sm font-medium ${valueClassName || ""}`}>
+      {value}
+    </p>
   </div>
 );
 

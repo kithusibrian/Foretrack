@@ -100,7 +100,9 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="text-left">{format(row.getValue("createdAt"), "MMM dd, yyyy")}</div>
+      <div className="text-left">
+        {format(row.getValue("createdAt"), "MMM dd, yyyy")}
+      </div>
     ),
   },
   {
@@ -187,7 +189,9 @@ export const transactionColumns: ColumnDef<TransactionType>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="text-left">{format(row.original.date, "MMM dd, yyyy")}</div>
+      <div className="text-left">
+        {format(row.original.date, "MMM dd, yyyy")}
+      </div>
     ),
   },
   {

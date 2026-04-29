@@ -145,7 +145,10 @@ export const removeContributionService = async (
   txn.isContribution = false;
   await txn.save();
 
-  goal.currentAmount = Math.max(0, (goal.currentAmount ?? 0) - contributionAmount);
+  goal.currentAmount = Math.max(
+    0,
+    (goal.currentAmount ?? 0) - contributionAmount,
+  );
 
   if (goal.targetAmount > 0 && goal.currentAmount < goal.targetAmount) {
     goal.status = GoalStatusEnum.ACTIVE;
