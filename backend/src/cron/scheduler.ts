@@ -27,8 +27,9 @@ export const startJobs = () => {
     //runs at 12:05am every day
     scheduleJob("Transactions", "5 0 * * *", processRecurringTransactions),
 
-    //run 2:30am every first of the month
-    scheduleJob("Reports", "30 2 1 * *", processReportJob),
+    // run 2:30am every day so missed month-end runs can backfill safely
+    // nextReportDate still ensures each report is generated once per month
+    scheduleJob("Reports", "30 2 * * *", processReportJob),
     //scheduleJob("Reports", "* * * * *", processReportJob),
   ];
 };

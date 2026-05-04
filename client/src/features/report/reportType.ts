@@ -27,3 +27,15 @@ export interface GetAllReportResponse {
 export interface UpdateReportSettingParams {
     isEnabled: boolean;
 }
+
+export interface GenerateManualReportParams {
+    email?: string;
+    from?: string;
+    to?: string;
+}
+
+export interface GenerateManualReportResponse {
+    message: string;
+    processed: number;
+    failed: number;
+}
