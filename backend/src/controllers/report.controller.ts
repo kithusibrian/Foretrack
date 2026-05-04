@@ -8,7 +8,10 @@ import {
   getAllReportsService,
   updateReportSettingService,
 } from "../services/report.service";
-import { updateReportSettingSchema, generateManualReportSchema } from "../validators/report.validator";
+import {
+  updateReportSettingSchema,
+  generateManualReportSchema,
+} from "../validators/report.validator";
 import UserModel from "../models/user.model";
 import ReportSettingModel from "../models/report-setting.model";
 import ReportModel, { ReportStatusEnum } from "../models/report.model";
@@ -72,9 +75,7 @@ export const generateReportForUserController = asyncHandler(
 
     // Determine date range: default to last month
     const now = new Date();
-    const fromDate = from
-      ? new Date(from)
-      : startOfMonth(subMonths(now, 1));
+    const fromDate = from ? new Date(from) : startOfMonth(subMonths(now, 1));
     const toDate = to ? new Date(to) : endOfMonth(subMonths(now, 1));
 
     // Resolve target user
@@ -86,13 +87,19 @@ export const generateReportForUserController = asyncHandler(
 
     const requesterEmail = requester?.email;
     const isAllowed =
-      requesterEmail === targetUser.email || requesterEmail === "briaokm@gmail.com";
+      requesterEmail === targetUser.email ||
+      requesterEmail === "briaokm@gmail.com";
 
-    if (!isAllowed) throw new UnauthorizedException("Not authorized to generate this report");
+    if (!isAllowed)
+      throw new UnauthorizedException("Not authorized to generate this report");
 
     const session = await mongoose.startSession();
     try {
-      const report = await generateReportService(targetUser.id, fromDate, toDate);
+      const report = await generateReportService(
+        targetUser.id,
+        fromDate,
+        toDate,
+      );
 
       let emailSent = false;
       if (report) {
@@ -121,7 +128,9 @@ export const generateReportForUserController = asyncHandler(
         const bulkReports: any[] = [];
         const bulkSettings: any[] = [];
 
-        const setting = await ReportSettingModel.findOne({ userId: targetUser.id });
+        const setting = await ReportSettingModel.findOne({
+          userId: targetUser.id,
+        });
 
         if (report && emailSent) {
           bulkReports.push({
@@ -158,8 +167,11 @@ export const generateReportForUserController = asyncHandler(
                 userId: targetUser.id,
                 sentDate: now,
                 period:
-                  report?.period || `${fromDate.toISOString()}–${toDate.toISOString()}`,
-                status: report ? ReportStatusEnum.FAILED : ReportStatusEnum.NO_ACTIVITY,
+                  report?.period ||
+                  `${fromDate.toISOString()}–${toDate.toISOString()}`,
+                status: report
+                  ? ReportStatusEnum.FAILED
+                  : ReportStatusEnum.NO_ACTIVITY,
                 createdAt: now,
                 updatedAt: now,
               },
@@ -184,7 +196,9 @@ export const generateReportForUserController = asyncHandler(
 
         await Promise.all([
           ReportModel.bulkWrite(bulkReports, { ordered: false }),
-          bulkSettings.length ? ReportSettingModel.bulkWrite(bulkSettings, { ordered: false }) : Promise.resolve(),
+          bulkSettings.length
+            ? ReportSettingModel.bulkWrite(bulkSettings, { ordered: false })
+            : Promise.resolve(),
         ]);
       });
 

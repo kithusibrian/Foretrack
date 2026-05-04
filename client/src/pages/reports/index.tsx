@@ -1,15 +1,10 @@
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import PageLayout from "@/components/page-layout";
 import ScheduleReportDrawer from "./_component/schedule-report-drawer";
 import ReportTable from "./_component/report-table";
 import ManualReportButton from "./_component/manual-report-button";
 
-
 export default function Reports() {
- 
   return (
     <PageLayout
       title="Report History"
@@ -22,11 +17,11 @@ export default function Reports() {
         </div>
       }
     >
-        <Card className="border shadow-none">
-          <CardContent>
-           <ReportTable />
-          </CardContent>
-        </Card>
+      <Card className="border shadow-none">
+        <CardContent>
+          <ReportTable />
+        </CardContent>
+      </Card>
     </PageLayout>
   );
 }

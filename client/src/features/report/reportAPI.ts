@@ -8,15 +8,17 @@ import {
 
 export const reportApi = apiClient.injectEndpoints({
   endpoints: (builder) => ({
-    
-    getAllReports: builder.query<GetAllReportResponse, {pageNumber: number, pageSize: number}>({
+    getAllReports: builder.query<
+      GetAllReportResponse,
+      { pageNumber: number; pageSize: number }
+    >({
       query: (params) => {
         const { pageNumber = 1, pageSize = 20 } = params;
-        return ({
+        return {
           url: "/report/all",
           method: "GET",
           params: { pageNumber, pageSize },
-        });
+        };
       },
     }),
 
@@ -42,7 +44,7 @@ export const reportApi = apiClient.injectEndpoints({
 });
 
 export const {
-    useGetAllReportsQuery,
-    useUpdateReportSettingMutation,
-    useGenerateManualReportMutation,
+  useGetAllReportsQuery,
+  useUpdateReportSettingMutation,
+  useGenerateManualReportMutation,
 } = reportApi;

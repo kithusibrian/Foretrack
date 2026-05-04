@@ -14,4 +14,6 @@ export const generateManualReportSchema = z.object({
   to: z.string().optional(),
 });
 
-export type GenerateManualReportType = z.infer<typeof generateManualReportSchema>;
+export type GenerateManualReportType = z.infer<
+  typeof generateManualReportSchema
+>;

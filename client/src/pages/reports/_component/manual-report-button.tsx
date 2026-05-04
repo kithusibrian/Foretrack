@@ -8,7 +8,8 @@ import { format } from "date-fns";
 const MANUAL_REPORT_TRIGGER_AT_KEY = "manual_report_triggered_at";
 
 const ManualReportButton = () => {
-  const [generateManualReport, { isLoading }] = useGenerateManualReportMutation();
+  const [generateManualReport, { isLoading }] =
+    useGenerateManualReportMutation();
   const [lastTriggeredAt, setLastTriggeredAt] = useState<string | null>(null);
 
   useEffect(() => {
@@ -26,7 +27,9 @@ const ManualReportButton = () => {
         toast.success(response.message || "Report request sent successfully");
       })
       .catch((error) => {
-        toast.error(error?.data?.message || "Failed to trigger report generation");
+        toast.error(
+          error?.data?.message || "Failed to trigger report generation",
+        );
       });
   };
 
@@ -39,7 +42,11 @@ const ManualReportButton = () => {
         disabled={isLoading}
         className="w-full sm:w-auto"
       >
-        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+        {isLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Send className="mr-2 h-4 w-4" />
+        )}
         Send missed report
       </Button>
 
