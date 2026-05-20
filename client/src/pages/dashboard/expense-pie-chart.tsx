@@ -22,12 +22,12 @@ import { EmptyState } from "@/components/empty-state";
 import { useExpensePieChartBreakdownQuery } from "@/features/analytics/analyticsAPI";
 
 const COLORS = [
-  "#10906D",
-  "#0EA5A3",
+  "#1D4ED8",
   "#F59E0B",
-  "#F97316",
-  "#E25D48",
-  "#3B82F6",
+  "#06B6D4",
+  "#8B5CF6",
+  "#F43F5E",
+  "#334155",
 ];
 
 const formatKsh = (
