@@ -99,7 +99,7 @@ const DashboardDataChart: React.FC<PropsType> = (props) => {
                 sm:border-l border-gray-100 dark:border-border sm:px-4 sm:py-6 min-w-36"
               >
                 <span className="w-full block text-xs text-muted-foreground">
-                  No of {chartConfig[chart].label}
+                  No of {chart} transactions
                 </span>
                 <span className="flex items-center justify-center gap-2 text-base sm:text-lg md:text-2xl lg:text-3xl font-semibold leading-none">
                   {key === TRANSACTION_TYPES[0] ? (

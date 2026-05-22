@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import Logo from "@/components/logo/logo";
 import { cn } from "@/lib/utils";
+// removed dashboard preview images per user request
 import { ArrowRight, Quote } from "lucide-react";
 
 type IconType = ComponentType<{ className?: string }>;
@@ -61,14 +62,20 @@ export function AuthShell({
 }: AuthShellProps) {
   return (
     <div className="relative min-h-svh overflow-hidden bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.22),transparent_26%),radial-gradient(circle_at_88%_14%,rgba(99,102,241,0.18),transparent_24%),radial-gradient(circle_at_20%_82%,rgba(16,185,129,0.16),transparent_28%),linear-gradient(180deg,rgba(244,248,255,0.98),rgba(226,235,251,1))] text-foreground dark:bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.24),transparent_24%),radial-gradient(circle_at_88%_14%,rgba(99,102,241,0.22),transparent_22%),radial-gradient(circle_at_20%_82%,rgba(16,185,129,0.18),transparent_28%),linear-gradient(180deg,rgba(6,10,18,0.98),rgba(13,19,33,1))]">
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.12)_1px,transparent_1px)] bg-[size:72px_72px] opacity-25 dark:opacity-15" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.54),transparent_28%,transparent_72%,rgba(255,255,255,0.18))] opacity-70 dark:opacity-10" />
+      <img
+        src="/banner.jpeg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-70 mix-blend-multiply dark:opacity-40 dark:mix-blend-screen"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.12)_1px,transparent_1px)] bg-[size:72px_72px] opacity-10 dark:opacity-8" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.34),transparent_28%,transparent_72%,rgba(255,255,255,0.08))] opacity-40 dark:opacity-6" />
       <div className="pointer-events-none absolute left-[-8rem] top-[-6rem] h-72 w-72 rounded-full bg-cyan-400/25 blur-3xl" />
       <div className="pointer-events-none absolute right-[-5rem] top-[18%] h-64 w-64 rounded-full bg-indigo-400/18 blur-3xl" />
       <div className="pointer-events-none absolute bottom-[-8rem] left-[25%] h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" />
 
       <div className="relative grid min-h-svh lg:grid-cols-[1.08fr_0.92fr]">
-        <section className="order-2 relative flex flex-col justify-between border-b border-cyan-500/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.54))] px-4 py-6 backdrop-blur-2xl dark:border-cyan-400/10 dark:bg-[linear-gradient(180deg,rgba(8,13,24,0.78),rgba(11,17,31,0.62))] sm:px-6 lg:order-1 lg:border-b-0 lg:border-r lg:px-10 lg:py-8">
+        <section className="relative hidden flex-col justify-between border-b border-cyan-500/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.54))] px-4 py-6 backdrop-blur-2xl dark:border-cyan-400/10 dark:bg-[linear-gradient(180deg,rgba(8,13,24,0.78),rgba(11,17,31,0.62))] sm:px-6 lg:flex lg:border-b-0 lg:border-r lg:px-10 lg:py-8">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(14,165,233,0.08),transparent_26%),radial-gradient(circle_at_80%_40%,rgba(99,102,241,0.08),transparent_24%)]" />
           <div className="space-y-8">
             <div className="flex flex-wrap items-center justify-between gap-3 sm:flex-nowrap sm:gap-4">
@@ -157,6 +164,7 @@ export function AuthShell({
                 </div>
               ))}
             </div>
+          
           </div>
 
           <div className="mt-8 rounded-[1.75rem] border border-cyan-500/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.55))] p-5 shadow-xl shadow-cyan-500/5 backdrop-blur-sm dark:border-cyan-400/10 dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(15,23,42,0.62))]">
@@ -209,36 +217,38 @@ export function AuthShell({
           </div>
         </section>
 
-        <section className="order-1 flex items-center justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:order-2">
-          <Card
-            className={cn(
-              "w-full max-w-xl overflow-hidden border-cyan-500/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.78))] shadow-[0_30px_90px_-32px_rgba(14,165,233,0.38)] ring-1 ring-cyan-500/10 backdrop-blur-2xl dark:border-cyan-400/15 dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(15,23,42,0.76))]",
-            )}
-          >
-            <CardContent className="space-y-6 p-5 sm:p-6 md:p-8">
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700/80 dark:text-cyan-300/80">
-                  {formTag}
-                </p>
-                <h2 className="text-[1.65rem] font-semibold tracking-tight sm:text-[1.85rem] md:text-[2.2rem]">
-                  {formTitle}
-                </h2>
-                <p className="text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-                  {formDescription}
-                </p>
-              </div>
-
-              <Separator className="bg-border/60" />
-
-              {children}
-
-              {formNote && (
-                <p className="text-sm leading-6 text-muted-foreground">
-                  {formNote}
-                </p>
+        <section className="flex min-h-svh items-start justify-center px-4 py-6 sm:px-6 sm:py-8 md:px-10 lg:min-h-0 lg:items-center lg:py-8">
+          <div className="w-full max-w-xl space-y-4 sm:space-y-5">
+            <Card
+              className={cn(
+                "w-full overflow-hidden border-cyan-500/15 bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(255,255,255,0.68))] shadow-[0_30px_90px_-32px_rgba(14,165,233,0.38)] ring-1 ring-cyan-500/10 backdrop-blur-2xl dark:border-cyan-400/15 dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.82),rgba(15,23,42,0.68))]",
               )}
-            </CardContent>
-          </Card>
+            >
+              <CardContent className="space-y-6 p-5 sm:p-6 md:p-8">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-700/80 dark:text-cyan-300/80">
+                    {formTag}
+                  </p>
+                  <h2 className="text-[1.65rem] font-semibold tracking-tight sm:text-[1.85rem] md:text-[2.2rem]">
+                    {formTitle}
+                  </h2>
+                  <p className="text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+                    {formDescription}
+                  </p>
+                </div>
+
+                <Separator className="bg-border/60" />
+
+                {children}
+
+                {formNote && (
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {formNote}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </section>
       </div>
     </div>

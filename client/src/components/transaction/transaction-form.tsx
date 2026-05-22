@@ -28,7 +28,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, endOfDay, isAfter } from "date-fns";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import RecieptScanner from "./reciept-scanner";
 import {
@@ -370,7 +370,7 @@ const TransactionForm = (props: {
                       className="w-auto p-0 !pointer-events-auto"
                       align="start"
                     >
-                      <CalendarComponent
+                        <CalendarComponent
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
@@ -379,7 +379,10 @@ const TransactionForm = (props: {
                             setIsDatePopoverOpen(false);
                           }
                         }}
-                        disabled={(date) => date < new Date("2023-01-01")}
+                        disabled={(date) =>
+                          date < new Date("2023-01-01") ||
+                          isAfter(date, endOfDay(new Date()))
+                        }
                         initialFocus
                       />
                     </PopoverContent>
