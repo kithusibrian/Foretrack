@@ -370,7 +370,7 @@ const TransactionForm = (props: {
                       className="w-auto p-0 !pointer-events-auto"
                       align="start"
                     >
-                        <CalendarComponent
+                      <CalendarComponent
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {

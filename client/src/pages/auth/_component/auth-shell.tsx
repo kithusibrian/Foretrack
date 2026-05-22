@@ -164,7 +164,6 @@ export function AuthShell({
                 </div>
               ))}
             </div>
-          
           </div>
 
           <div className="mt-8 rounded-[1.75rem] border border-cyan-500/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.55))] p-5 shadow-xl shadow-cyan-500/5 backdrop-blur-sm dark:border-cyan-400/10 dark:bg-[linear-gradient(180deg,rgba(15,23,42,0.84),rgba(15,23,42,0.62))]">

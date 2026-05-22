@@ -291,4 +291,3 @@ const ChartSkeleton = () => (
 );
 
 export default DashboardDataChart;
-
