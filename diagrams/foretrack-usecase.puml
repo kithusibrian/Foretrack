@@ -1,0 +1,58 @@
+@startuml
+left to right direction
+skinparam backgroundColor White
+
+actor "User" as User
+actor "AI Coach" as AI
+actor "Email Service" as Email
+
+rectangle "Foretrack" {
+  (Register) as UC1
+  (Login) as UC2
+  (Google OAuth) as UC3
+  (Create Transaction) as UC4
+  (Edit Transaction) as UC5
+  (Delete Transaction) as UC6
+  (Bulk Upload/Import Transactions) as UC7
+  (Scan Receipt (AI Extraction)) as UC8
+  (Create Budget) as UC9
+  (View Budget Progress) as UC10
+  (Set/Update Budget Alerts) as UC11
+  (Create Goal) as UC12
+  (Contribute to Goal) as UC13
+  (View Analytics Dashboard) as UC14
+  (Get Expense Breakdown (Pie Chart)) as UC15
+  (Ask AI Financial Coach) as UC16
+  (Generate & Send Monthly Report) as UC17
+  (Configure Report Settings) as UC18
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+
+User --> UC4
+User --> UC5
+User --> UC6
+User --> UC7
+User --> UC8
+
+User --> UC9
+User --> UC10
+User --> UC11
+
+User --> UC12
+User --> UC13
+
+User --> UC14
+User --> UC15
+
+User --> UC16
+AI --> UC16
+
+User --> UC18
+User --> UC17
+Email --> UC17
+
+@enduml
+

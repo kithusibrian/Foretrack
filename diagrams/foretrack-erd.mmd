@@ -1,0 +1,75 @@
+erDiagram
+  USER {
+    string id PK
+    string name
+    string email
+    string profilePicture
+    string password
+  }
+
+  TRANSACTION {
+    string id PK
+    string userId FK
+    string type
+    string title
+    number amount
+    string category
+    string receiptUrl
+    string goalId FK
+    boolean isContribution
+    string recurringInterval
+    date nextRecurringDate
+    date lastProcessed
+    boolean isRecurring
+    string description
+    string status
+    string paymentMethod
+    date date
+  }
+
+  BUDGET {
+    string id PK
+    string userId FK
+    string category
+    string period
+    number month
+    number year
+    number limitAmount
+  }
+
+  GOAL {
+    string id PK
+    string userId FK
+    string title
+    string description
+    number targetAmount
+    number currentAmount
+    date targetDate
+    string status
+  }
+
+  REPORT_SETTING {
+    string id PK
+    string userId FK
+    string frequency
+    boolean isEnabled
+    date nextReportDate
+    date lastSentDate
+  }
+
+  REPORT {
+    string id PK
+    string userId FK
+    string period
+    date sentDate
+    string status
+  }
+
+  USER ||--o{ TRANSACTION : owns
+  USER ||--o{ BUDGET : sets
+  USER ||--o{ GOAL : creates
+  USER ||--o{ REPORT_SETTING : configures
+  USER ||--o{ REPORT : generates
+
+  GOAL ||--o{ TRANSACTION : supports_contribution
+

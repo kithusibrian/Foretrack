@@ -1,0 +1,58 @@
+%% Foretrack architecture diagram (Mermaid)
+graph LR
+  subgraph Client
+    A[Browser / React App]
+  end
+
+  subgraph API[API Server — Node.js / Express]
+    direction TB
+    API_GW[API Gateway / Routes]
+    AuthSvc[Auth Service]
+    TxSvc[Transaction Service]
+    ReceiptSvc[Receipt Scanner Service]
+    BudgetSvc[Budget Service]
+    GoalSvc[Goal Service]
+    AnalyticsSvc[Analytics Service]
+    ReportSvc[Report Service]
+    Cron[Scheduler / Cron Jobs]
+  end
+
+  subgraph DB[Database]
+    Mongo[(MongoDB)]
+  end
+
+  subgraph External[External Services]
+    OAuth[Google OAuth]
+    Cloudinary[Cloudinary (images)]
+    Gemini[Google Gemini (AI)]
+    Resend[Resend (Email)]
+  end
+
+  A -->|HTTPS JSON/API| API_GW
+  API_GW --> AuthSvc
+  API_GW --> TxSvc
+  API_GW --> BudgetSvc
+  API_GW --> GoalSvc
+  API_GW --> AnalyticsSvc
+  API_GW --> ReportSvc
+
+  AuthSvc -->|reads/writes| Mongo
+  TxSvc -->|reads/writes| Mongo
+  BudgetSvc -->|reads/writes| Mongo
+  GoalSvc -->|reads/writes| Mongo
+  AnalyticsSvc -->|reads| Mongo
+  ReportSvc -->|reads/writes| Mongo
+
+  TxSvc -->|upload receipt| Cloudinary
+  ReceiptSvc -->|upload/fetch| Cloudinary
+  ReceiptSvc -->|prompt| Gemini
+  ReportSvc -->|send email| Resend
+
+  AuthSvc -->|oauth flow| OAuth
+
+  Cron -->|trigger| ReportSvc
+  Cron -->|trigger recurring jobs| TxSvc
+
+  API_GW -.->|websocket / push| A
+
+  Mongo ---|backups/logs| ExternalStorage[(Backup/Monitoring)]
