@@ -1,6 +1,20 @@
 # Foretrack
 
+
 Foretrack is a full-stack personal finance tracking platform that helps users manage income and expenses, set budgets, track financial goals, and receive AI-powered insights and automated reports.
+A production-style full-stack application that helps users track finances, manage budgets, and receive AI-powered financial insights and automated reports.
+
+🔗 Live Demo: https://foretrack-pi.vercel.app/
+💻 GitHub: https://github.com/kithusibrian/Foretrack/
+
+**Core Highlights:**
+
+* AI Financial Coach (Google Gemini integration)
+* Automated monthly financial reports via email
+* Budget tracking with real-time progress analytics
+* Receipt scanning with AI data extraction
+* Recurring transaction automation system
+* Secure authentication (JWT + Google OAuth)
 
 ## Product Overview
 
